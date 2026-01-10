@@ -11,8 +11,7 @@ This project combines:
 
 ## Architecture
 
-ADD UML DIAGRAM HERE
-
+![PlantUML model](https://img.plantuml.biz/plantuml/png/LP31IiH038RlUOeSxM7rBY9Rgk2oAnQtjtQHOHhNOMUICXE5VNkdqu9up9_lIqYsIKtKx-01F7qggc1qvo_5qKMoweG1-hU9k96Hi3uJwy0tzGxhb5nsMQiJchHqe7zjMZnI_A6OgM2dZrIAs-bQ3NmGQtoX6-yAlZVUOTtk_fnBJlv9Js8l58krG01b5pviDe_h8Bp7UN4RHSMAXpKjn29bugNhshltvsC7QpHt-uvYS6pya0yCmV2OvlFucXyXlZe1R8d7_9vV) 
   
 ## How to use it
 
