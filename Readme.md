@@ -14,3 +14,17 @@ This project combines:
 ADD UML DIAGRAM HERE
 
   
+## How to use it
+
+Build de Docker image
+
+`docker build --tag 'kali-mcp' .`
+
+Run the Docket image
+
+`docker run --rm -d --name kali-mcp -p 5000:5000 kali-mcp`
+
+Run the AI Agent penstest
+
+`opencode -m opencode/big-pickle run "Target URL: http://web-app-to-test, Mode:recon" --file pentester-agent.md`
+
