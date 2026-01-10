@@ -30,5 +30,19 @@ Run the Docket image
 
 Run the AI Agent penstest
 
-`opencode -m opencode/big-pickle run "Target URL: http://web-app-to-test, Mode:recon" --file agents/pentester-agent.md`
+`opencode -m opencode/big-pickle run "Target URL: http://TARGET-WEB-APP, Mode:recon" --file agents/pentester-agent.md`
+
+
+
+## How to use it
+
+Results from a local test using DVWA docker image
+
+`docker run --rm -it -p 80:80 vulnerables/web-dvwa`
+
+Running the AI Agent  on _pentest_ mode
+
+`opencode -m opencode/big-pickle run "Target URL: http://192.168.1.158, Mode:pentest" --file pentester-agent.md`
+
+Results
 
