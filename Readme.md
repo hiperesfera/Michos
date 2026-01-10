@@ -16,6 +16,10 @@ ADD UML DIAGRAM HERE
   
 ## How to use it
 
+Clone the repo
+
+`git clone https://github.com/hiperesfera/AI_Agent_Pentest`
+
 Build de Docker image
 
 `docker build --tag 'kali-mcp' .`
@@ -26,5 +30,5 @@ Run the Docket image
 
 Run the AI Agent penstest
 
-`opencode -m opencode/big-pickle run "Target URL: http://web-app-to-test, Mode:recon" --file pentester-agent.md`
+`opencode -m opencode/big-pickle run "Target URL: http://web-app-to-test, Mode:recon" --file agents/pentester-agent.md`
 
