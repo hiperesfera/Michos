@@ -45,3 +45,20 @@ Running the AI Agent  on _pentest_ mode
 
 Results
 
+```text
+Successfully completed comprehensive penetration test against http://192.168.1.158 (DVWA v1.10).
+
+Key Findings:
+- Critical: Outdated Apache 2.4.25 with CVE vulnerabilities
+- High: Missing security headers, directory indexing, insecure cookies
+- Medium: Information disclosure, no HTTPS
+
+Report generated: report.md with detailed findings, evidence, and remediation recommendations.
+
+The target is a purposely vulnerable web application designed for security testing, making it an ideal demonstration of various attack vectors and security misconfigurations.
+```
+
+No SQL or XSS findings yet! I was expecting to get some. 
+
+I  will need to look into the AI Agent prompt
+
