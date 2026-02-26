@@ -45,7 +45,7 @@ Running the AI Agent  on _pentest_ mode against DVWP
 
 Results
 
-Summary below, see Results.md for more details.
+Summary below, see [report.md](https://github.com/hiperesfera/AI_Agent_Pentest/blob/main/Results/report.md) for more details.
 
 | ID | Finding | Severity | CVSS | Exploitability | Remediation Priority |
 |----|---------|----------|------|----------------|---------------------|
