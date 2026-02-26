@@ -31,6 +31,9 @@ Run the AI Agent penstest
 
 `opencode -m opencode/big-pickle run "Target URL: http://TARGET-WEB-APP, Mode:recon" --file agents/pentester-agent.md`
 
+Example using Ollama, refer to opencode configuration example `opencode.json` to load local Ollama models
+`opencode -m ollama/qwen3.5:cloud run "Target URL: http://172.17.0.2, Mode:pentest" --file pentester-agent.md`
+
 
 
 ## How to use it
