@@ -39,24 +39,26 @@ Results from a local test using DVWA docker image
 
 `docker run --rm -it -p 80:80 vulnerables/web-dvwa`
 
-Running the AI Agent  on _pentest_ mode
+Running the AI Agent  on _pentest_ mode against DVWP
 
-`opencode -m opencode/big-pickle run "Target URL: http://192.168.1.158, Mode:pentest" --file pentester-agent.md`
+`opencode -m opencode/big-pickle run "Target URL: http://172.17.0.2, Mode:pentest" --file pentester-agent.md`
 
 Results
 
-```text
-Successfully completed comprehensive penetration test against http://192.168.1.158 (DVWA v1.10).
+Summary below, see Results.md for more details.
 
-Key Findings:
-- Critical: Outdated Apache 2.4.25 with CVE vulnerabilities
-- High: Missing security headers, directory indexing, insecure cookies
-- Medium: Information disclosure, no HTTPS
+| ID | Finding | Severity | CVSS | Exploitability | Remediation Priority |
+|----|---------|----------|------|----------------|---------------------|
+| 1 | SQL Injection | Critical | 9.8 | Easy | Immediate |
+| 2 | RCE via File Upload | Critical | 10.0 | Easy | Immediate |
+| 3 | Command Injection | Critical | 9.8 | Easy | Immediate |
+| 4 | Stored XSS | High | 7.2 | Easy | High |
+| 5 | Reflected XSS | High | 7.3 | Easy | High |
+| 6 | CSRF | High | 7.5 | Easy | High |
+| 7 | Directory Listing | Medium | 4.3 | Easy | Medium |
+| 8 | Missing Security Headers | Medium | 4.8 | Easy | Medium |
+| 9 | Outdated Apache | Low | 3.7 | Medium | Low |
 
-Report generated: report.md with detailed findings, evidence, and remediation recommendations.
-
-The target is a purposely vulnerable web application designed for security testing, making it an ideal demonstration of various attack vectors and security misconfigurations.
-```
 
 No SQL or XSS findings yet! I was expecting to get some. 
 
