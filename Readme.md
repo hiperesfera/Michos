@@ -60,7 +60,3 @@ Summary below, see Results.md for more details.
 | 9 | Outdated Apache | Low | 3.7 | Medium | Low |
 
 
-No SQL or XSS findings yet! I was expecting to get some. 
-
-I  will need to look into the AI Agent prompt
-
