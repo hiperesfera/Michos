@@ -87,4 +87,4 @@ EXPOSE 5000
 
 # Set the correct entrypoint to run the Kali server
 # Using 0.0.0.0 to accept connections from outside the container
-CMD ["python3", "kali_server.py", "--ip", "0.0.0.0", "--port", "5000"]
+CMD ["python3", "server.py", "--ip", "0.0.0.0", "--port", "5000"]
