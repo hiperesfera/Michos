@@ -14,7 +14,6 @@ RUN apt-get update && \
     && apt-get clean \
     && rm -rf /var/lib/apt/lists/*
 
-
 # Update and install essential packages
 RUN apt-get update && apt-get install -y \
     python3 \
@@ -40,6 +39,27 @@ RUN apt-get update && apt-get install -y \
     gobuster \
     dirb \
     hydra \
+    && apt-get clean \
+    && rm -rf /var/lib/apt/lists/*
+
+# Update and install comprehensive Kali tools
+RUN apt-get update && apt-get install -y \
+    kali-tools-top10 \
+    kali-tools-web \
+    kali-tools-database \
+    kali-tools-passwords \
+    kali-tools-wireless \
+    kali-tools-reverse-engineering \
+    kali-tools-exploitation \
+    kali-tools-social-engineering \
+    kali-tools-sniffing-spoofing \
+    kali-tools-post-exploitation \
+    kali-tools-forensics \
+    kali-tools-hardware \
+    kali-tools-crypto-stego \
+    kali-tools-vulnerability \
+    kali-tools-web \
+    kali-tools-information-gathering \
     && apt-get clean \
     && rm -rf /var/lib/apt/lists/*
 
