@@ -5,13 +5,20 @@ A Docker-based setup that exposes Kali Linux penetration testing tools through a
 ## Overview
 
 This project combines:
+
 - **Kali Linux Docker Container**: Running essential penetration testing tools
 - **MCP Kali Server**: Exposing Kali tools via API ([Wh0am123/MCP-Kali-Server](https://github.com/Wh0am123/MCP-Kali-Server))
 - **OpenCode Agent**: AI agent that can execute security tools and automate tasks
+- **Ollama**: Running open models locally or in the cloud, providing the LLM backend for the OpenCode agent
+
+###  Why Ollama ?
+
+Penetration testing  often involves sensitive targets, data, and vulnerability details. Even though most cloud LLM providers exclude API traffic from model training by default, data still transits and is temporarily processed on third-party infrastructure. This could conflict with client data requirements, regulated environments, or even air-gapped environments where connectivity to external endpoints is not even possible. Running a model locally via Ollama ensures that all prompts, tool outputs, and findings stay entirely within your own infrastructure, with no external dependency or data exposure risk.
+
 
 ## Architecture
 
-![PlantUML model](https://img.plantuml.biz/plantuml/png/LP31IiH038RlUOeSxM7rBY9Rgk2oAnQtjtQHOHhNOMUICXE5VNkdqu9up9_lIqYsIKtKx-01F7qggc1qvo_5qKMoweG1-hU9k96Hi3uJwy0tzGxhb5nsMQiJchHqe7zjMZnI_A6OgM2dZrIAs-bQ3NmGQtoX6-yAlZVUOTtk_fnBJlv9Js8l58krG01b5pviDe_h8Bp7UN4RHSMAXpKjn29bugNhshltvsC7QpHt-uvYS6pya0yCmV2OvlFucXyXlZe1R8d7_9vV) 
+![PlantUML model](https://img.plantuml.biz/plantuml/png/LP11QyCm38Nl_XMYf-sGxbx6QEa66qjPM78C3EDedObi1KSjzDzNDemsHxtdx-d9srbiabCWG_Wh80p97_y41f_GYUTeZECmSSGeiFgQCEvvGDWTTUvZ7zlH4sr0TS5PAflrTHXMO6TWLPs-layux1jeCPqnzV4XkEbdBiDwkZpsiMPdgQ3gt5EVbZpiceyREggoO5_PZPWAdBr5Qo8Rh48b7-hwiDZ5nJRclouyLzLBRW0Ro7MRnCAEoMIfU7c1ckzTrpnzlxMTiYKZkxUhpHRZe3zx1G00) 
   
 ## How to use it
 
