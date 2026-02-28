@@ -1,5 +1,4 @@
 {
-  
   "$schema": "https://opencode.ai/config.json",
   "autoupdate": true,
 
@@ -27,10 +26,9 @@
   "mcp": {
    "kali-server": {
      "type": "local",
-     "command": ["python3", "/home/jfonteboa/virtual_envs/secagent/MCP-Kali-Server/mcp_server.py", "--server", "http://localhost:5000"],
+     "command": ["python3", "/home/jfonteboa/virtual_envs/secagent/MCP-Kali-Server/client.py", "--server", "http://localhost:5000"],
      "enabled": true
    }
   }
-  
 }
 
