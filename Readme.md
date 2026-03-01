@@ -40,7 +40,7 @@ Pull, configure and run the Ollama Docker image
 
 Pull qwen3.5:cloud and login to Ollama.
 
-Important: this is not a local model; unfortunately, my local laptop won't run anything over a 7B parameter model. For testing purposes, I am using a cloud hosted model
+Important: this is not a local model; unfortunately, my laptop won't run anything over a 7B parameter model. For testing purposes, I am using a cloud-hosted model
 
 `docker exec -it ollama ollama pull qwen3.5:cloud`
 
