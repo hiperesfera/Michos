@@ -34,16 +34,14 @@ Run the Docket image
 
 `docker run --rm -d --name kali-mcp -p 5000:5000 kali-mcp`
 
-Run the AI Agent pentest
+Run the AI Agent pentest - quick test
 
 `opencode -m opencode/big-pickle run "Target URL: http://zero.webappsecurity.com/, Mode:recon" --file agents/pentester-agent.md`
-
 
 >[!NOTE]
 >Example using Ollama, refer to the opencode configuration example `opencode.json` to load local Ollama models
 >
 >`OPENCODE_CONFIG=.opencode.json opencode -m ollama/qwen3.5:cloud run "Target URL: http://TARGET-WEB-AP, Mode:pentest" --file pentester-agent.md`
-
 
 
 ## Test Example
