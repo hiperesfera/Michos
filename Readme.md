@@ -32,9 +32,9 @@ Build de Docker image
 
 Run the Docket image
 
-`docker run --rm -d --name kali-mcp -p 5000:5000 kali-mcp`
+`docker run --cap-add NET_RAW --cap-add NET_ADMIN  --rm -d --name kali-mcp -p 5000:5000 kali-mcp`
 
-Run the AI Agent pentest - quick test
+Run the AI Agent pentest - quick test using opencode big-pickle 
 
 `opencode -m opencode/big-pickle run "Target URL: http://zero.webappsecurity.com/, Mode:recon" --file agents/pentester-agent.md`
 
