@@ -26,15 +26,40 @@ Clone the repo
 
 `git clone https://github.com/hiperesfera/AI_Agent_Pentest`
 
-Build de Docker image
+Build and run the Kali Docker image
 
 `docker build --tag 'kali-mcp' .`
 
-Run the Docket image
-
 `docker run --cap-add NET_RAW --cap-add NET_ADMIN  --rm -d --name kali-mcp -p 5000:5000 kali-mcp`
 
-Run the AI Agent pentest - quick test using opencode big-pickle 
+Pull, configure and run the Ollama Docker image 
+
+`docker pull ollama/ollama`
+
+`docker run --rm -d --name ollama -p 11434:11434 ollama/ollama`
+
+Pull qwen3.5:cloud and login to Ollama.
+
+Important: this is not a local model; unfortunately, my local laptop won't run anything over a 7B parameter model. For testing purposes, I am using a cloud hosted model
+
+`docker exec -it ollama ollama pull qwen3.5:cloud`
+
+`docker exec -it ollama ollama signin`
+
+`OPENCODE_CONFIG=.opencode.json opencode -m ollama/qwen3.5:cloud run "Which model are you running ?"`
+
+Test Ollama model
+
+`docker exec -it ollama ollama list`
+
+response: 
+> build · qwen3.5:cloud
+
+I'm running on qwen3.5:cloud (model ID: ollama/qwen3.5:cloud).
+
+
+
+Run the AI Agent pentest - quick test using OpenCode big-pickle 
 
 `opencode -m opencode/big-pickle run "Target URL: http://zero.webappsecurity.com/, Mode:recon" --file agents/pentester-agent.md`
 
