@@ -48,11 +48,15 @@ Pull qwen3.5:cloud and login to Ollama.
 
 `docker exec -it ollama ollama signin`
 
-`OPENCODE_CONFIG=.opencode.json opencode -m ollama/qwen3.5:cloud run "Which model are you running ?"`
+List models available
+
+`docker exec -it ollama ollama list`
+
+
 
 Test Ollama model
 
-`docker exec -it ollama ollama list`
+`OPENCODE_CONFIG=.opencode.json opencode -m ollama/qwen3.5:cloud run "Which model are you running ?"`
 
 Response: 
 > build · qwen3.5:cloud
