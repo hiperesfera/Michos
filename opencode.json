@@ -27,7 +27,8 @@
    "kali-server": {
      "type": "local",
      "command": ["python3", "/home/jfonteboa/virtual_envs/secagent/MCP-Kali-Server/client.py", "--server", "http://localhost:5000"],
-     "enabled": true
+     "enabled": true,
+     "timeout": 300000
    }
   }
 }
