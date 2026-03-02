@@ -38,9 +38,11 @@ Pull, configure and run the Ollama Docker image
 
 `docker run --rm -d --name ollama -p 11434:11434 ollama/ollama`
 
-Pull qwen3.5:cloud and login to Ollama.
+Important: this is not a local model; unfortunately, my laptop won't run anything with a 7B-parameter model. 
+For testing purposes, I am using a cloud-hosted model
 
-Important: this is not a local model; unfortunately, my laptop won't run anything over a 7B parameter model. For testing purposes, I am using a cloud-hosted model
+
+Pull qwen3.5:cloud and login to Ollama.
 
 `docker exec -it ollama ollama pull qwen3.5:cloud`
 
@@ -52,10 +54,10 @@ Test Ollama model
 
 `docker exec -it ollama ollama list`
 
-response: 
+Response: 
 > build · qwen3.5:cloud
-
-I'm running on qwen3.5:cloud (model ID: ollama/qwen3.5:cloud).
+>
+> I'm running on qwen3.5:cloud (model ID: ollama/qwen3.5:cloud).
 
 
 
@@ -71,9 +73,11 @@ Run the AI Agent pentest - quick test using OpenCode big-pickle
 
 ## Test Example
 
-Results from a local test using DVWA docker image
+Results from a local test using DVWA and OWASP Juice-Shop docker image
 
 `docker run --rm -it -p 80:80 vulnerables/web-dvwa`
+
+`docker run --rm -p 127.0.0.1:3000:3000 bkimminich/juice-shop`
 
 Running the AI Agent  on _pentest_ mode against DVWP
 
