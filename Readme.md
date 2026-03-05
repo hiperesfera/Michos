@@ -62,10 +62,12 @@ Response:
 
 Listing the containers
 
+```
 > (secagent) @:~/virtual_envs/secagent$ docker ps
 > CONTAINER ID   IMAGE           COMMAND                  CREATED          STATUS          PORTS                                           NAMES
 > 33794e59cd8f   kali-mcp        "python3 server.py -…"   3 seconds ago    Up 2 seconds    0.0.0.0:5000->5000/tcp, :::5000->5000/tcp       kali-mcp
 > 82c71622fc9c   ollama/ollama   "/bin/ollama serve"      14 minutes ago   Up 14 minutes   0.0.0.0:11434->11434/tcp, :::11434->11434/tcp   ollama
+```
 
 Run the AI Agent pentest - quick test using OpenCode big-pickle 
 
