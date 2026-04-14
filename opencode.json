@@ -7,7 +7,7 @@
       "npm": "@ai-sdk/openai-compatible",
       "name": "Ollama (local)",
       "options": {
-        "baseURL": "http://localhost:11434/v1"
+        "baseURL": "http://127.0.0.1:11434/v1"
       },
       "models": {
         "llama3.1:8b": {
@@ -26,9 +26,9 @@
   "mcp": {
    "kali-server": {
      "type": "local",
-     "command": ["python3", "/home/jfonteboa/virtual_envs/secagent/MCP-Kali-Server/client.py", "--server", "http://localhost:5000"],
+     "command": ["python3", "/home/jfonteboa/virtual_envs/secagent/MCP-Kali-Server/client.py", "--server", "http://127.0.0.1:5000"],
      "enabled": true,
-     "timeout": 300000
+     "timeout": 720000
    }
   }
 }
