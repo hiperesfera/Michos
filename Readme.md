@@ -105,7 +105,7 @@ Running the AI Agent on _recon_ mode against [zero.webappsecurity.com](http://ze
 
 `OPENCODE_CONFIG=./opencode.json opencode -m ollama/qwen3.5:cloud run "Target URL: http://zero.webappsecurity.com/, Mode:recon" --file pentester-agent.md`
 
-Summary below, see [Results/zero-webappsecurity-recon.md](https://github.com/hiperesfera/AI_Agent_Pentest/blob/main/Results/zero-webappsecurity-recon.md) for the full report.
+Summary below, see [Results/zero-webappsecurity-recon.md](https://github.com/hiperesfera/AI_Agent_Pentest/blob/main/Results/zero.webappsecurity.com-report.md) for the full report.
 
 | ID | Finding | Severity | CVSS | Exploitability | Remediation Priority |
 |----|---------|----------|------|----------------|---------------------|
