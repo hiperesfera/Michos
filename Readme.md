@@ -1,6 +1,6 @@
 # Kali Linux MCP Server for OpenCode Agent
 
-A Docker-based setup that exposes Kali Linux penetration testing tools through an MCP server, enabling AI agents built with OpenCode to perform security assessments and automated penetration testing tasks.
+A Docker-based setup that exposes Kali Linux penetration testing tools through an MCP server, enabling AI agents built with OpenCode to perform security assessments, and automated penetration testing tasks.
 
 ## Overview
 
@@ -20,11 +20,33 @@ Penetration testing  often involves sensitive targets, data, and vulnerability d
 
 ![PlantUML model](https://img.plantuml.biz/plantuml/png/LP11QyCm38Nl_XMYf-sGxbx6QEa66qjPM78C3EDedObi1KSjzDzNDemsHxtdx-d9srbiabCWG_Wh80p97_y41f_GYUTeZECmSSGeiFgQCEvvGDWTTUvZ7zlH4sr0TS5PAflrTHXMO6TWLPs-layux1jeCPqnzV4XkEbdBiDwkZpsiMPdgQ3gt5EVbZpiceyREggoO5_PZPWAdBr5Qo8Rh48b7-hwiDZ5nJRclouyLzLBRW0Ro7MRnCAEoMIfU7c1ckzTrpnzlxMTiYKZkxUhpHRZe3zx1G00) 
   
-## Environment setup
+## How to use it
 
 Clone the repo
 
 `git clone https://github.com/hiperesfera/AI_Agent_Pentest`
+
+
+Clone the MCP Kali Server and adjust timeouts
+
+```
+git clone https://github.com/Wh0am123/MCP-Kali-Server
+```
+
+Long-running tools like nmap, sqlmap, or hydra can exceed the default limits. Edit these two constants before building:
+
+**`MCP-Kali-Server/server.py` — line 31** (how long the server waits for a command to finish):
+```python
+COMMAND_TIMEOUT = 600  # seconds — increase for slow scans (e.g. 1200)
+```
+
+**`MCP-Kali-Server/client.py` — line 27** (how long the client waits for an HTTP response):
+```python
+DEFAULT_REQUEST_TIMEOUT = 660  # seconds — keep ~60s above COMMAND_TIMEOUT
+```
+
+> [!NOTE]
+> Keep `DEFAULT_REQUEST_TIMEOUT` a bit higher than `COMMAND_TIMEOUT` so the HTTP connection does not drop before the server has a chance to return the command's output.
 
 Build and run the Kali Docker image
 
@@ -38,10 +60,11 @@ Pull, configure and run the Ollama Docker image
 
 `docker run --rm -d --name ollama -p 11434:11434 ollama/ollama`
 
-Important: this is not a local model; unfortunately, my laptop won't run anything with a 7B-parameter model. 
-For testing purposes, I am using a cloud-hosted model
+> [!Important]
+> This is not a local model; unfortunately, my laptop won't run anything with a 7B-parameter model. For testing purposes, I am using a cloud-hosted model
 
-Pull qwen3.5:cloud and login to Ollama.
+
+Pull qwen3.5:cloud and log in to Ollama.
 
 `docker exec -it ollama ollama pull qwen3.5:cloud`
 
@@ -51,7 +74,9 @@ List models available
 
 `docker exec -it ollama ollama list`
 
-Prompt test Ollama model
+
+
+Test Ollama model
 
 `OPENCODE_CONFIG=.opencode.json opencode -m ollama/qwen3.5:cloud run "Which model are you running ?"`
 
@@ -60,34 +85,27 @@ Response:
 >
 > I'm running on qwen3.5:cloud (model ID: ollama/qwen3.5:cloud).
 
-Listing the containers
 
-```
-> (secagent) @:~/virtual_envs/secagent$ docker ps
-> CONTAINER ID   IMAGE           COMMAND                  CREATED          STATUS          PORTS                                           NAMES
-> 33794e59cd8f   kali-mcp        "python3 server.py -…"   3 seconds ago    Up 2 seconds    0.0.0.0:5000->5000/tcp, :::5000->5000/tcp       kali-mcp
-> 82c71622fc9c   ollama/ollama   "/bin/ollama serve"      14 minutes ago   Up 14 minutes   0.0.0.0:11434->11434/tcp, :::11434->11434/tcp   ollama
-```
 
 Run the AI Agent pentest - quick test using OpenCode big-pickle 
 
 `opencode -m opencode/big-pickle run "Target URL: http://zero.webappsecurity.com/, Mode:recon" --file agents/pentester-agent.md`
 
-> [!NOTE]
-> Example using Ollama, refer to the opencode configuration example `opencode.json` to load local Ollama models
+>[!NOTE]
+>Example using Ollama, refer to the opencode configuration example `opencode.json` to load local Ollama models
 >
-> `OPENCODE_CONFIG=.opencode.json opencode -m ollama/qwen3.5:cloud run "Target URL: http://zero.webappsecurity.com/, Mode:passive" --file pentester-agent.md`
+>`OPENCODE_CONFIG=.opencode.json opencode -m ollama/qwen3.5:cloud run "Target URL: http://zero.webappsecurity.com/, Mode:passive" --file pentester-agent.md`
 
 
-## Pentest Agent in action 
+## Test Example
 
-Results from a local test using DVWA and OWASP Juice-Shop Docker image
+Results from a local test using DVWA and OWASP Juice-Shop docker image
 
 `docker run --rm -it -p 80:80 vulnerables/web-dvwa`
 
 `docker run --rm -p 127.0.0.1:3000:3000 bkimminich/juice-shop`
 
-Running the AI Agent  on _pentest_ mode against DVWP and OWASP Juice-Shop
+Running the AI Agent  on _pentest_ mode against DVWP
 
 `OPENCODE_CONFIG=.opencode.json opencode -m ollama/qwen3.5:cloud run "Target URL: http://172.17.0.2, Mode:pentest" --file pentester-agent.md`
 
