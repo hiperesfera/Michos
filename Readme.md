@@ -89,12 +89,12 @@ Response:
 
 Run the AI Agent pentest - quick test using OpenCode big-pickle 
 
-`opencode -m opencode/big-pickle run "Target URL: http://zero.webappsecurity.com/, Mode:recon" --file agents/pentester-agent.md`
+`opencode -m opencode/big-pickle run "Target URL: http://zero.webappsecurity.com/, Mode:recon" --file skills/web-app-pentester.md`
 
 >[!NOTE]
 >Example using Ollama, refer to the opencode configuration example `opencode.json` to load local Ollama models
 >
->`OPENCODE_CONFIG=.opencode.json opencode -m ollama/qwen3.5:cloud run "Target URL: http://zero.webappsecurity.com/, Mode:passive" --file pentester-agent.md`
+>`OPENCODE_CONFIG=.opencode.json opencode -m ollama/qwen3.5:cloud run "Target URL: http://zero.webappsecurity.com/, Mode:passive" --file skills/web-app-pentester.md`
 
 
 ## Test Examples
@@ -103,7 +103,7 @@ Run the AI Agent pentest - quick test using OpenCode big-pickle
 
 Running the AI Agent on _recon_ mode against [zero.webappsecurity.com](http://zero.webappsecurity.com/), a publicly available intentionally vulnerable banking demo app, no local setup required.
 
-`OPENCODE_CONFIG=./opencode.json opencode -m ollama/qwen3.5:cloud run "Target URL: http://zero.webappsecurity.com/, Mode:recon" --file pentester-agent.md`
+`OPENCODE_CONFIG=./opencode.json opencode -m ollama/qwen3.5:cloud run "Target URL: http://zero.webappsecurity.com/, Mode:recon" --file skills/web-app-pentester.md`
 
 Summary below, see [Results/zero-webappsecurity-recon.md](https://github.com/hiperesfera/AI_Agent_Pentest/blob/main/Results/zero.webappsecurity.com-report.md) for the full report.
 
@@ -129,7 +129,7 @@ Results from a local test using DVWA and OWASP Juice-Shop docker image
 
 Running the AI Agent on _pentest_ mode against DVWA
 
-`OPENCODE_CONFIG=.opencode.json opencode -m ollama/qwen3.5:cloud run "Target URL: http://172.17.0.2, Mode:pentest" --file pentester-agent.md`
+`OPENCODE_CONFIG=.opencode.json opencode -m ollama/qwen3.5:cloud run "Target URL: http://172.17.0.2, Mode:pentest" --file skills/web-app-pentester.md`
 
 Summary below, see [Results/report.md](https://github.com/hiperesfera/AI_Agent_Pentest/blob/main/Results/report.md) for the full report.
 
