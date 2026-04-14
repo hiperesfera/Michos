@@ -97,7 +97,29 @@ Run the AI Agent pentest - quick test using OpenCode big-pickle
 >`OPENCODE_CONFIG=.opencode.json opencode -m ollama/qwen3.5:cloud run "Target URL: http://zero.webappsecurity.com/, Mode:passive" --file pentester-agent.md`
 
 
-## Test Example
+## Test Examples
+
+### Open vulnerable web — zero.webappsecurity.com (recon)
+
+Running the AI Agent on _recon_ mode against [zero.webappsecurity.com](http://zero.webappsecurity.com/), a publicly available intentionally vulnerable banking demo app, no local setup required.
+
+`OPENCODE_CONFIG=./opencode.json opencode -m ollama/qwen3.5:cloud run "Target URL: http://zero.webappsecurity.com/, Mode:recon" --file pentester-agent.md`
+
+Summary below, see [Results/zero-webappsecurity-recon.md](https://github.com/hiperesfera/AI_Agent_Pentest/blob/main/Results/zero-webappsecurity-recon.md) for the full report.
+
+| ID | Finding | Severity | CVSS | Exploitability | Remediation Priority |
+|----|---------|----------|------|----------------|---------------------|
+| 1 | Unauthenticated Admin Access + Plaintext Credentials & SSNs | Critical | 9.8 | Trivial | Immediate |
+| 2 | Error Log Publicly Accessible (logs usernames & passwords) | Critical | 8.6 | Trivial | Immediate |
+| 3 | Backup File Exposes Server-Side Source Code (`/index.old`) | Critical | 8.2 | Trivial | Immediate |
+| 4 | Dangerous HTTP Methods Enabled (PUT, DELETE, TRACE, PATCH) | High | 7.5 | Easy | High |
+| 5 | Missing Security Headers (X-Frame-Options, CSP, HSTS, etc.) | High | 6.5 | Easy | High |
+| 6 | Apache Server Status Page Exposed (`/server-status`) | Medium | 5.3 | Easy | Medium |
+| 7 | CORS Wildcard (`Access-Control-Allow-Origin: *`) | Medium | 5.0 | Moderate | Medium |
+
+---
+
+### Local vulnerable targets — DVWA and OWASP Juice-Shop (pentest)
 
 Results from a local test using DVWA and OWASP Juice-Shop docker image
 
@@ -105,13 +127,11 @@ Results from a local test using DVWA and OWASP Juice-Shop docker image
 
 `docker run --rm -p 127.0.0.1:3000:3000 bkimminich/juice-shop`
 
-Running the AI Agent  on _pentest_ mode against DVWP
+Running the AI Agent on _pentest_ mode against DVWA
 
 `OPENCODE_CONFIG=.opencode.json opencode -m ollama/qwen3.5:cloud run "Target URL: http://172.17.0.2, Mode:pentest" --file pentester-agent.md`
 
-Results
-
-Summary below, see [report.md](https://github.com/hiperesfera/AI_Agent_Pentest/blob/main/Results/report.md) for more details.
+Summary below, see [Results/report.md](https://github.com/hiperesfera/AI_Agent_Pentest/blob/main/Results/report.md) for the full report.
 
 | ID | Finding | Severity | CVSS | Exploitability | Remediation Priority |
 |----|---------|----------|------|----------------|---------------------|
