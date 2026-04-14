@@ -76,7 +76,7 @@ Run the AI Agent pentest - quick test using OpenCode big-pickle
 > [!NOTE]
 > Example using Ollama, refer to the opencode configuration example `opencode.json` to load local Ollama models
 >
-> `OPENCODE_CONFIG=.opencode.json opencode -m ollama/qwen3.5:cloud run "Target URL: http://TARGET-WEB-AP, Mode:pentest" --file pentester-agent.md`
+> `OPENCODE_CONFIG=.opencode.json opencode -m ollama/qwen3.5:cloud run "Target URL: http://zero.webappsecurity.com/, Mode:passive" --file pentester-agent.md`
 
 
 ## Pentest Agent in action 
