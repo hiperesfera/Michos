@@ -4,22 +4,13 @@ FROM kalilinux/kali-rolling:latest
 RUN echo "deb http://http.kali.org/kali kali-rolling main contrib non-free non-free-firmware" > /etc/apt/sources.list && \
     echo "deb-src http://http.kali.org/kali kali-rolling main contrib non-free non-free-firmware" >> /etc/apt/sources.list
 
-# Update and install dependencies
-RUN apt-get update && \
-    apt-get install -y \
-    git \
-    python3 \
-    python3-pip \
-    python3-venv \
-    && apt-get clean \
-    && rm -rf /var/lib/apt/lists/*
-
-# Update and install essential packages
+# System utilities not provided by any metapackage
 RUN apt-get update && apt-get install -y \
+    git \
     python3 \
     python3-pip \
     python3-venv \
-    git \
+    whois \
     curl \
     wget \
     vim \
@@ -27,24 +18,13 @@ RUN apt-get update && apt-get install -y \
     ssh \
     net-tools \
     iputils-ping \
-    nmap \
-    nikto \
-    sqlmap \
-    metasploit-framework \
-    john \
-    hashcat \
-    aircrack-ng \
-    wireshark \
-    burpsuite \
     gobuster \
-    dirb \
-    hydra \
     && apt-get clean \
     && rm -rf /var/lib/apt/lists/*
 
-# Update and install comprehensive Kali tools
+# Kali metapackages (cover all remaining security tools)
 RUN apt-get update && apt-get install -y \
-    kali-tools-top10 \
+    kali-linux-headless \
     kali-tools-web \
     kali-tools-database \
     kali-tools-passwords \
@@ -58,7 +38,6 @@ RUN apt-get update && apt-get install -y \
     kali-tools-hardware \
     kali-tools-crypto-stego \
     kali-tools-vulnerability \
-    kali-tools-web \
     kali-tools-information-gathering \
     && apt-get clean \
     && rm -rf /var/lib/apt/lists/*
