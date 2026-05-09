@@ -1,10 +1,12 @@
 FROM kalilinux/kali-rolling:latest
 
+ENV DEBIAN_FRONTEND=noninteractive
+
 # Fix Kali repositories and update
 RUN echo "deb http://http.kali.org/kali kali-rolling main contrib non-free non-free-firmware" > /etc/apt/sources.list && \
     echo "deb-src http://http.kali.org/kali kali-rolling main contrib non-free non-free-firmware" >> /etc/apt/sources.list
 
-# System utilities not provided by any metapackage
+# System utilities
 RUN apt-get update && apt-get install -y \
     git \
     python3 \
@@ -18,29 +20,66 @@ RUN apt-get update && apt-get install -y \
     ssh \
     net-tools \
     iputils-ping \
-    gobuster \
-    && apt-get clean \
-    && rm -rf /var/lib/apt/lists/*
+    && apt-get clean && rm -rf /var/lib/apt/lists/*
 
-# Kali metapackages (cover all remaining security tools)
+# Scanning & fingerprinting
 RUN apt-get update && apt-get install -y \
-    kali-linux-headless \
-    kali-tools-web \
-    kali-tools-database \
-    kali-tools-passwords \
-    kali-tools-wireless \
-    kali-tools-reverse-engineering \
-    kali-tools-exploitation \
-    kali-tools-social-engineering \
-    kali-tools-sniffing-spoofing \
-    kali-tools-post-exploitation \
-    kali-tools-forensics \
-    kali-tools-hardware \
-    kali-tools-crypto-stego \
-    kali-tools-vulnerability \
-    kali-tools-information-gathering \
-    && apt-get clean \
-    && rm -rf /var/lib/apt/lists/*
+    nmap \
+    nikto \
+    whatweb \
+    wafw00f \
+    sslscan \
+    sslyze \
+    && apt-get clean && rm -rf /var/lib/apt/lists/*
+
+# Web proxies & interceptors
+RUN apt-get update && apt-get install -y \
+    burpsuite \
+    zaproxy \
+    mitmproxy \
+    && apt-get clean && rm -rf /var/lib/apt/lists/*
+
+# Injection & exploitation
+RUN apt-get update && apt-get install -y \
+    sqlmap \
+    commix \
+    xsser \
+    && apt-get clean && rm -rf /var/lib/apt/lists/*
+
+# Directory & content discovery
+RUN apt-get update && apt-get install -y \
+    gobuster \
+    dirb \
+    dirbuster \
+    wfuzz \
+    ffuf \
+    feroxbuster \
+    && apt-get clean && rm -rf /var/lib/apt/lists/*
+
+# Authentication attacks
+RUN apt-get update && apt-get install -y \
+    hydra \
+    medusa \
+    patator \
+    ncrack \
+    && apt-get clean && rm -rf /var/lib/apt/lists/*
+
+# CMS scanners
+RUN apt-get update && apt-get install -y \
+    wpscan \
+    joomscan \
+    && apt-get clean && rm -rf /var/lib/apt/lists/*
+
+# Wordlists & recon
+RUN apt-get update && apt-get install -y \
+    wordlists \
+    seclists \
+    cewl \
+    crunch \
+    theharvester \
+    recon-ng \
+    dnsrecon \
+    && apt-get clean && rm -rf /var/lib/apt/lists/*
 
 # Create working directory
 WORKDIR /opt
