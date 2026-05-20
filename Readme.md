@@ -1,6 +1,6 @@
 # Kali Linux MCP Server for OpenCode Agent
 
-A Docker-based setup that exposes Kali Linux penetration testing tools through an MCP server, enabling AI agents built with OpenCode to perform security assessments, and automated penetration testing tasks.
+A Docker-based setup that exposes Kali Linux penetration testing tools through an MCP server, enabling AI agents built with OpenCode to perform security assessments and automated penetration testing tasks.
 
 ## Overview
 
@@ -8,7 +8,7 @@ This project combines:
 
 - **Kali Linux Docker Container**: Running essential penetration testing tools
 - **MCP Kali Server**: Exposing Kali tools via API ([Wh0am123/MCP-Kali-Server](https://github.com/Wh0am123/MCP-Kali-Server))
-- **OpenCode Agent**: AI agent that can execute security tools and automate tasks
+- **OpenCode Agent**: An AI agent that can execute security tools and automate tasks based on a "Skill"
 - **Ollama**: Running open models locally or in the cloud, providing the LLM backend for the OpenCode agent
 
 ###  Why Ollama ?
@@ -22,127 +22,89 @@ Penetration testing  often involves sensitive targets, data, and vulnerability d
   
 ## How to use it
 
-Clone the repo
+1. Install OpenCode
 
-`git clone https://github.com/hiperesfera/AI_Agent_Pentest`
+    `curl -fsSL https://opencode.ai/install | bash`
 
-
-Clone the MCP Kali Server and adjust timeouts
-
-```
-git clone https://github.com/Wh0am123/MCP-Kali-Server
-```
-
-Long-running tools like nmap, sqlmap, or hydra can exceed the default limits. Edit these two constants before building:
-
-**`MCP-Kali-Server/server.py` — line 31** (how long the server waits for a command to finish):
-```python
-COMMAND_TIMEOUT = 600  # seconds — increase for slow scans (e.g. 1200)
-```
-
-**`MCP-Kali-Server/client.py` — line 27** (how long the client waits for an HTTP response):
-```python
-DEFAULT_REQUEST_TIMEOUT = 660  # seconds — keep ~60s above COMMAND_TIMEOUT
-```
-
-> [!NOTE]
-> Keep `DEFAULT_REQUEST_TIMEOUT` a bit higher than `COMMAND_TIMEOUT` so the HTTP connection does not drop before the server has a chance to return the command's output.
-
-Build and run the Kali Docker image
-
-`docker build --tag 'kali-mcp' .`
-
-`docker run --cap-add NET_RAW --cap-add NET_ADMIN  --rm -d --name kali-mcp -p 5000:5000 kali-mcp`
-
-Pull, configure and run the Ollama Docker image 
-
-`docker pull ollama/ollama`
-
-`docker run --rm -d --name ollama -p 11434:11434 ollama/ollama`
-
-> [!Important]
-> This is not a local model; unfortunately, my laptop won't run anything with a 7B-parameter model. For testing purposes, I am using a cloud-hosted model
+2. Clone this repo
+    
+    `git clone https://github.com/hiperesfera/AI_Agent_Pentest`
 
 
-Pull qwen3.5:cloud and log in to Ollama.
+3. Clone the MCP Kali Server and adjust timeouts
 
-`docker exec -it ollama ollama pull qwen3.5:cloud`
+    `git clone https://github.com/Wh0am123/MCP-Kali-Server`
 
-`docker exec -it ollama ollama signin`
+    Long-running tools like nmap, sqlmap, or hydra can exceed the default limits. Edit these two constants before building:
+    
+    *MCP-Kali-Server/server.py* — line 31 (how long the server waits for a command to finish):
+    ```
+    COMMAND_TIMEOUT = 600  # seconds — increase for slow scans (e.g. 1200)
+    ```
 
-List models available
+    *MCP-Kali-Server/client.py* — line 27 (how long the client waits for an HTTP response):
+    ```
+    DEFAULT_REQUEST_TIMEOUT = 660  # seconds — keep ~60s above COMMAND_TIMEOUT
+    ```
 
-`docker exec -it ollama ollama list`
+    > [!NOTE]
+    > Keep `DEFAULT_REQUEST_TIMEOUT` a bit higher than `COMMAND_TIMEOUT`, so the HTTP connection does not drop before the server has a chance to return the command's output.
 
+4. Build and run the Kali Docker image
+
+    `docker build --tag 'kali-mcp' .`
+    `docker run --cap-add NET_RAW --cap-add NET_ADMIN  --rm -d --name kali-mcp -p 5000:5000 kali-mcp`
+
+5. Pull, configure and run the Ollama Docker image 
+
+    `docker pull ollama/ollama`
+    `docker run --rm -d --name ollama -p 11434:11434 ollama/ollama`
+
+
+    6. Pull the models into Ollama.
+
+    `docker exec -it ollama ollama pull qwen3.5:cloud`
+    `docker exec -it ollama ollama pull deepseek-v4-pro:cloud`
+    `docker exec -it ollama ollama pull kimi-k2.6:cloud`
+    `docker exec -it ollama ollama signin`
 
 
 Test Ollama model
+
+>[!NOTE]
+>Example using Ollama, refer to the opencode configuration example `opencode.json` to load local Ollama models
+>
+>`OPENCODE_CONFIG=.opencode.json opencode -m ollama/qwen3.5:cloud run ...`
+
 
 `OPENCODE_CONFIG=.opencode.json opencode -m ollama/qwen3.5:cloud run "Which model are you running ?"`
 
 Response: 
 > build · qwen3.5:cloud
->
 > I'm running on qwen3.5:cloud (model ID: ollama/qwen3.5:cloud).
 
 
 
-Run the AI Agent pentest - quick test using OpenCode big-pickle 
 
-`opencode -m opencode/big-pickle run "Target URL: http://zero.webappsecurity.com/, Mode:recon" --file skills/web-app-pentester.md`
+## Test Examples and LLM models benchmark
 
->[!NOTE]
->Example using Ollama, refer to the opencode configuration example `opencode.json` to load local Ollama models
->
->`OPENCODE_CONFIG=.opencode.json opencode -m ollama/qwen3.5:cloud run "Target URL: http://zero.webappsecurity.com/, Mode:passive" --file skills/web-app-pentester.md`
+A curated list of vulnerable web applications can be found in [OWASP Vulnerable Web Applications Directory](https://vwad.owasp.org/). While many of these web apps can run in Docker on my local machine, I decided to use online  web apps for simplicity and real-world experience (external app, network latency, ISP blocks, etc.):
+
+### Vulnerable Web Applications
+
+- https://brokencrystals.com/
+- https://vulnbank.org/
+- http://zero.webappsecurity.com/
+
+### LLM Models
+
+- claude-opus-4-7 (for comparison to proprietary model)
+- deepseek-v4-pro
+- kimi-k2.6
+- qwen3.5
 
 
-## Test Examples
 
-### Open vulnerable web — zero.webappsecurity.com (recon)
 
-Running the AI Agent on _recon_ mode against [zero.webappsecurity.com](http://zero.webappsecurity.com/), a publicly available intentionally vulnerable banking demo app, no local setup required.
-
-`OPENCODE_CONFIG=./opencode.json opencode -m ollama/qwen3.5:cloud run "Target URL: http://zero.webappsecurity.com/, Mode:recon" --file skills/web-app-pentester.md`
-
-Summary below, see [Results/zero-webappsecurity-recon.md](https://github.com/hiperesfera/AI_Agent_Pentest/blob/main/Results/zero.webappsecurity.com-report.md) for the full report.
-
-| ID | Finding | Severity | CVSS | Exploitability | Remediation Priority |
-|----|---------|----------|------|----------------|---------------------|
-| 1 | Unauthenticated Admin Access + Plaintext Credentials & SSNs | Critical | 9.8 | Trivial | Immediate |
-| 2 | Error Log Publicly Accessible (logs usernames & passwords) | Critical | 8.6 | Trivial | Immediate |
-| 3 | Backup File Exposes Server-Side Source Code (`/index.old`) | Critical | 8.2 | Trivial | Immediate |
-| 4 | Dangerous HTTP Methods Enabled (PUT, DELETE, TRACE, PATCH) | High | 7.5 | Easy | High |
-| 5 | Missing Security Headers (X-Frame-Options, CSP, HSTS, etc.) | High | 6.5 | Easy | High |
-| 6 | Apache Server Status Page Exposed (`/server-status`) | Medium | 5.3 | Easy | Medium |
-| 7 | CORS Wildcard (`Access-Control-Allow-Origin: *`) | Medium | 5.0 | Moderate | Medium |
-
----
-
-### Local vulnerable targets — DVWA and OWASP Juice-Shop (pentest)
-
-Results from a local test using DVWA and OWASP Juice-Shop docker image
-
-`docker run --rm -it -p 80:80 vulnerables/web-dvwa`
-
-`docker run --rm -p 127.0.0.1:3000:3000 bkimminich/juice-shop`
-
-Running the AI Agent on _pentest_ mode against DVWA
-
-`OPENCODE_CONFIG=.opencode.json opencode -m ollama/qwen3.5:cloud run "Target URL: http://172.17.0.2, Mode:pentest" --file skills/web-app-pentester.md`
-
-Summary below, see [Results/report.md](https://github.com/hiperesfera/AI_Agent_Pentest/blob/main/Results/report.md) for the full report.
-
-| ID | Finding | Severity | CVSS | Exploitability | Remediation Priority |
-|----|---------|----------|------|----------------|---------------------|
-| 1 | SQL Injection | Critical | 9.8 | Easy | Immediate |
-| 2 | RCE via File Upload | Critical | 10.0 | Easy | Immediate |
-| 3 | Command Injection | Critical | 9.8 | Easy | Immediate |
-| 4 | Stored XSS | High | 7.2 | Easy | High |
-| 5 | Reflected XSS | High | 7.3 | Easy | High |
-| 6 | CSRF | High | 7.5 | Easy | High |
-| 7 | Directory Listing | Medium | 4.3 | Easy | Medium |
-| 8 | Missing Security Headers | Medium | 4.8 | Easy | Medium |
-| 9 | Outdated Apache | Low | 3.7 | Medium | Low |
 
 
