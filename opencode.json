@@ -16,6 +16,15 @@
         "qwen3.5:cloud": {
           "name": "qwen3.5:cloud"
         },
+          "deepseek-v4-pro:cloud": {
+          "name": "deepseek-v4-pro:cloud"
+        },
+          "kimi-k2.6:cloud": {
+          "name": "kimi-k2.6:cloud"
+        },
+          "kimi-k2.5:cloud": {
+          "name": "kimi-k2.5:cloud"
+        },
           "deepseek-v3.2:cloud": {
           "name": "deepseek-v3.2:cloud"
         }
@@ -32,4 +41,3 @@
    }
   }
 }
-
