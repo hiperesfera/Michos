@@ -7,7 +7,7 @@ Penetration testing  often involves sensitive targets, data, and vulnerability d
 
 Running a model locally via Ollama ensures that all prompts, tool outputs, and findings remain entirely within your own infrastructure, eliminating external dependencies and the risk of data exposure. By adopting open-weights models, we democratise the power of advanced AI, whether you deploy them locally for maximum privacy or in the cloud for greater scale. While there is a lot of hype surrounding proprietary models like Mythos, the reality is that anyone can now build highly capable agents using open-weight alternatives. It is only a matter of time before these models reach parity with current top-tier proprietary offerings, creating a dual-use reality that must be accounted for in every security strategy.
 
-Oh, and why **Michos**? Consider it a playful parody of Mythos, as 'micho' is the Galician word for a kitten.
+Oh, and why **Michos**? Consider it a playful parody of Mythos, as 'micho' is the [Galician](https://en.wikipedia.org/wiki/Galician_language) word for a kitten.
 
 ## Kali Linux MCP Server for OpenCode Agent
 
