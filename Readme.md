@@ -3,6 +3,12 @@
 
 ![Michos](https://github.com/hiperesfera/Michos/raw/main/img/michos.png)
 
+Penetration testing  often involves sensitive targets, data, and vulnerability details. Even though most cloud LLM providers exclude API traffic from model training by default, data still transits and is temporarily processed on third-party infrastructure. This could conflict with client data requirements, regulated environments, or even air-gapped environments where connectivity to external endpoints is not even possible. Running a model locally via Ollama ensures that all prompts, tool outputs, and findings stay entirely within your own infrastructure, with no external dependency or data exposure risk. 
+
+Running a model locally via Ollama ensures that all prompts, tool outputs, and findings remain entirely within your own infrastructure, eliminating external dependencies and the risk of data exposure. By adopting open-weights models, we democratise the power of advanced AI, whether you deploy them locally for maximum privacy or in the cloud for greater scale. While there is a lot of hype surrounding proprietary models like Mythos, the reality is that anyone can now build highly capable agents using open-weight alternatives. It is only a matter of time before these models reach parity with the current top-tier proprietary offerings, creating a dual-use reality that must be factored into every modern security strategy.
+
+Oh, and why **Michos**? Consider it a playful parody of Mythos, as 'micho' is the Galician word for a kitten.
+
 ## Kali Linux MCP Server for OpenCode Agent
 
 A Docker-based setup that exposes Kali Linux penetration testing tools through an MCP server, enabling AI agents built with OpenCode to perform security assessments and automated penetration testing tasks leveraging Ollama local and cloud open-weight models.
@@ -15,11 +21,6 @@ This project combines:
 - **MCP Kali Server**: Exposing Kali tools via API ([Wh0am123/MCP-Kali-Server](https://github.com/Wh0am123/MCP-Kali-Server))
 - **OpenCode Agent**: An AI agent that can execute security tools and automate tasks based on a "Skill"
 - **Ollama**: Running open models locally or in the cloud, providing the LLM backend for the OpenCode agent
-
-###  Why Ollama ?
-
-Penetration testing  often involves sensitive targets, data, and vulnerability details. Even though most cloud LLM providers exclude API traffic from model training by default, data still transits and is temporarily processed on third-party infrastructure. This could conflict with client data requirements, regulated environments, or even air-gapped environments where connectivity to external endpoints is not even possible. Running a model locally via Ollama ensures that all prompts, tool outputs, and findings stay entirely within your own infrastructure, with no external dependency or data exposure risk.
-
 
 ## Architecture
 
