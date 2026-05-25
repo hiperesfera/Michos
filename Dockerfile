@@ -10,7 +10,7 @@ RUN echo "deb http://http.kali.org/kali kali-rolling main contrib non-free non-f
     echo "deb-src http://http.kali.org/kali kali-rolling main contrib non-free non-free-firmware" >> /etc/apt/sources.list
 
 # System utilities
-RUN apt-get update && apt-get install -y \
+RUN apt-get update --fix-missing && apt-get install -y --fix-missing \
     git python3 python3-pip python3-venv pipx whois curl wget vim sudo ssh \
     iputils-ping jq unzip golang-go ca-certificates chromium chromium-driver libcap2-bin \
     && apt-get clean && rm -rf /var/lib/apt/lists/*
@@ -164,7 +164,7 @@ RUN for bin in dalfox katana waybackurls qsreplace gf anew subzy gau hakrawler g
         if [ -x "/opt/go/bin/$bin" ]; then cp -f "/opt/go/bin/$bin" "/usr/local/bin/$bin"; fi; \
     done
 
-# Complete Critical Binaries Verification
+# Critical Binaries Verification
 RUN set -e; \
     echo "=== Verifying critical binaries ==="; \
     MISSING=""; \
