@@ -18,7 +18,7 @@ Penetration testing  often involves sensitive targets, data, and vulnerability d
 
 ## Architecture
 
-![PlantUML model](https://img.plantuml.biz/plantuml/png/LP11QyCm38Nl_XMYf-sGxbx6QEa66qjPM78C3EDedObi1KSjzDzNDemsHxtdx-d9srbiabCWG_Wh80p97_y41f_GYUTeZECmSSGeiFgQCEvvGDWTTUvZ7zlH4sr0TS5PAflrTHXMO6TWLPs-layux1jeCPqnzV4XkEbdBiDwkZpsiMPdgQ3gt5EVbZpiceyREggoO5_PZPWAdBr5Qo8Rh48b7-hwiDZ5nJRclouyLzLBRW0Ro7MRnCAEoMIfU7c1ckzTrpnzlxMTiYKZkxUhpHRZe3zx1G00) 
+![PlantUML model](https://img.plantuml.biz/plantuml/png/ROz1J-im3CVl-HJMJkyTkdUVfcfx0ma4Y8hkk4j8l2sg4qTfnZGXlZj9EjGYkCK__-pul-gZ3F5aIH3k8qI6O0x72De4LD6m4trdd9T1Mb1iFJjqiOqNGiY2T0V2tnHu5m3_EMWCnLuksUTrakeQjEoFgCM74AC_UoQILiA6-AJ1iaRgPo1xK1dy57VkaPMaed0XKwVqfbieWr9_M-NHRHA4zI7LEzTsXcW1PtojfFULJn3xY65kzV1H8YhvqnrFcmPQ36yOTkwF8fFWt5_-Jk-poayd7YGPM3VtoU_BuE3ViEemb84k6KAKvB2iD9zTLLzJmWBkjjkc5KCvjiU4IHdo6xV7W4xXA5TZXgz7fdM-CStbC4tWo8f995HwvPphl_zURjkj42jq-cJf4m00) 
   
 ## How to use it
 
