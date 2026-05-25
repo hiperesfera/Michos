@@ -1,6 +1,11 @@
-# Kali Linux MCP Server for OpenCode Agent
 
-A Docker-based setup that exposes Kali Linux penetration testing tools through an MCP server, enabling AI agents built with OpenCode to perform security assessments and automated penetration testing tasks.
+# Michos
+
+
+
+## Kali Linux MCP Server for OpenCode Agent
+
+A Docker-based setup that exposes Kali Linux penetration testing tools through an MCP server, enabling AI agents built with OpenCode to perform security assessments and automated penetration testing tasks leveraging Ollama local and cloud open-weight models.
 
 ## Overview
 
