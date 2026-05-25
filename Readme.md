@@ -1,7 +1,7 @@
 
 # Michos
 
-
+![Michos](https://github.com/hiperesfera/Michos/raw/main/img/michos.png)
 
 ## Kali Linux MCP Server for OpenCode Agent
 
