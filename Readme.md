@@ -2,7 +2,7 @@
 
 Penetration testing  often involves sensitive targets, data, and vulnerability details. Even though most cloud LLM providers exclude API traffic from model training by default, data still transits and is temporarily processed on third-party infrastructure. This could conflict with client data requirements, regulated environments, or even air-gapped environments where connectivity to external endpoints is not even possible. Running a model locally via Ollama ensures that all prompts, tool outputs, and findings stay entirely within your own infrastructure, eliminating external dependencies and the risk of data exposure
 
-In addition, by adopting open-weight models, we democratise the power of advanced AI, whether you deploy them locally for maximum privacy or in the cloud for greater scale. While there is a lot of hype surrounding proprietary models like Mythos, the reality is that anyone can now build highly capable agents using open-weight alternatives. It is only a matter of time before these models reach parity with current top-tier proprietary offerings such as Mythos, creating a dual-use reality that must be accounted for in every security strategy.
+In addition, by adopting open-weight models, we democratise the power of advanced AI, whether you deploy them locally for maximum privacy or in the cloud for greater scale. While there is a lot of hype surrounding proprietary models like Mythos, the reality is that anyone can now build highly capable agents using open-weight alternatives. It is only a matter of time before these models reach parity with current top-tier proprietary offerings such, creating a dual-use reality that must be accounted for in every security strategy.
 
 Oh, and why **Michos**? Consider it a playful parody of Mythos, as 'micho' is the [Galician](https://en.wikipedia.org/wiki/Galician_language) word for a kitten.
 
@@ -30,7 +30,7 @@ This project combines:
   
    git clone https://github.com/hiperesfera/AI_Agent_Pentest`
 
-5. Clone the MCP Kali Server and adjust timeouts
+3. Clone the MCP Kali Server and adjust timeouts
 
     `git clone https://github.com/Wh0am123/MCP-Kali-Server`
 
@@ -42,9 +42,10 @@ This project combines:
     ```
 
     > [!NOTE]
+    > 
     > Keep `DEFAULT_REQUEST_TIMEOUT` a bit higher than `COMMAND_TIMEOUT`, so the HTTP connection does not drop before the server has a chance to return the command's output.
 
-6. Build and run the Kali Docker image. Note that I am adding an extra option to manually adjust the MCP timeout in the *MCP-Kali-Server/server.py* so we can adjust that via env variable when running the container.
+4. Build and run the Kali Docker image. Note that I am adding an extra option to manually adjust the MCP timeout in the *MCP-Kali-Server/server.py* so we can adjust that via env variable when running the container.
    
     ```
     RUN sed -i 's|^COMMAND_TIMEOUT = 180.*|COMMAND_TIMEOUT = int(os.environ.get("COMMAND_TIMEOUT", 600))|' server.py
@@ -60,30 +61,31 @@ This project combines:
    `docker push hiperesfera/kali-mcp`
    
 
-8. Pull, configure and run the Ollama Docker image 
+5. Pull, configure and run the Ollama Docker image 
 
     `docker pull ollama/ollama`
    
     `docker run --rm -d --name ollama -p 11434:11434 ollama/ollama`
 
 
-    6. Pull the models into Ollama.
+     Download the models into Ollama.
 
     `docker exec -it ollama ollama pull qwen3.5:cloud`
    
     `docker exec -it ollama ollama pull deepseek-v4-pro:cloud`
    
     `docker exec -it ollama ollama pull kimi-k2.6:cloud`
+
    
     `docker exec -it ollama ollama signin`
 
 
 Test Ollama model
 
->[!NOTE]
->Example using Ollama, refer to the opencode configuration example `opencode.json` to load local Ollama models
+> [!NOTE]
+> Example using Ollama, refer to the opencode configuration example `opencode.json` to load local Ollama models
 >
->`OPENCODE_CONFIG=.opencode.json opencode -m ollama/qwen3.5:cloud run ...`
+> `OPENCODE_CONFIG=.opencode.json opencode -m ollama/qwen3.5:cloud run ...`
 
 
 `OPENCODE_CONFIG=.opencode.json opencode -m ollama/qwen3.5:cloud run "Which model are you running ?"`
@@ -97,8 +99,22 @@ Response:
 
 ## Test Examples and LLM models benchmark
 
-A curated list of vulnerable web applications can be found in [OWASP Vulnerable Web Applications Directory](https://vwad.owasp.org/). While many of these web apps can run in Docker on my local machine, I decided to use online  web apps for simplicity and real-world experience (external app, network latency, ISP blocks, etc.):
+A curated list of vulnerable web applications is available in the [OWASP Vulnerable Web Applications Directory](https://vwad.owasp.org/). While many of these web apps can run in Docker on my local machine, I decided to use online  web apps for simplicity and real-world experience (external app, network latency, ISP blocks, etc.). There is a big caveat here: most of these web apps are likely part of the training for these models; in other words, the findings are things the model already knows or remembers. 
 
+LLMs are trained on vast amounts of internet data, which includes CVE databases, exploit write-ups, GitHub repositories, and bug bounty reports. If an application or its underlying middleware has been publicly available and discussed before the model's knowledge cutoff date, the model already "knows" about it.
+
+In other words, when you point the agent at the target, it doesn't start with a blank slate. Its neural network strongly associates the target's software fingerprint with specific known vulnerabilities.
+
+### How to defend against it?
+
+This is exactly why this skill web-app-pentester-refined.md was built the way it is:
+
+- State Separation (via Raw Extraction): Forcing the agent to write tool output to a file and read it back creates a hard execution break. This constrains the Agent to the live target's physical reality, preventing its predictive engine from hallucinating based on pre-trained memory.
+  
+- Strict Refusals: Explicitly instructing the model that "fabrication is strictly prohibited" and to clearly state if a tool produces no output helps override the model's tendency to please you with a "successful" hack. 
+
+- Optimised Foundation Models: General chat models are designed to be helpful and conversational, making them highly prone to inventing exploits. Defending against contamination requires using models that are heavily fine-tuned for strict instruction-following and structured data extraction, such as DeepSeek-v4-pro.
+  
 ### Vulnerable Web Applications
 
 - https://brokencrystals.com/
