@@ -26,9 +26,9 @@ This project combines:
 
     `curl -fsSL https://opencode.ai/install | bash`
 
-2. Clone this repo, it contains the skill, the Kali Docker file and the opencode configuration to use Ollama
-  
-   git clone https://github.com/hiperesfera/AI_Agent_Pentest`
+2. Clone this repo, it contains the skill, the [Kali Docker file](https://github.com/hiperesfera/Michos/blob/main/Dockerfile) and the [opencode configuration](https://github.com/hiperesfera/Michos/blob/main/opencode.json) to use Ollama
+
+    `git clone https://github.com/hiperesfera/AI_Agent_Pentest`
 
 3. Clone the MCP Kali Server and adjust timeouts
 
@@ -58,7 +58,7 @@ This project combines:
    
     Alternatively, you can pull it from my [Docker Hub](https://hub.docker.com/repository/docker/hiperesfera/kali-mcp/)
    
-   `docker push hiperesfera/kali-mcp`
+    `docker pull hiperesfera/kali-mcp`
    
 
 5. Pull, configure and run the Ollama Docker image 
@@ -68,7 +68,7 @@ This project combines:
     `docker run --rm -d --name ollama -p 11434:11434 ollama/ollama`
 
 
-     Download the models into Ollama.
+    Download the models into Ollama.
 
     `docker exec -it ollama ollama pull qwen3.5:cloud`
    
@@ -76,11 +76,10 @@ This project combines:
    
     `docker exec -it ollama ollama pull kimi-k2.6:cloud`
 
-   
     `docker exec -it ollama ollama signin`
 
 
-    Quick test using the `opencode.json` configuration example to load Ollama models
+    Quick test using the [`opencode.json`](https://github.com/hiperesfera/Michos/blob/main/opencode.json) configuration example to load Ollama models
 
     `OPENCODE_CONFIG=.opencode.json opencode -m ollama/deepseek-v4-pro:cloud run "Which model are you running ?"`
 
@@ -101,7 +100,7 @@ In other words, when you point the agent at the target, it doesn't start with a 
 
 ### How to defend against it?
 
-This is exactly why this skill web-app-pentester-refined.md was built the way it is:
+This is exactly why this skill [`web-app-pentester-refined.md`](https://github.com/hiperesfera/Michos/blob/main/skills/web-app-pentester.md) was built the way it is:
 
 - State Separation (via Raw Extraction): Forcing the agent to write tool output to a file and read it back creates a hard execution break. This constrains the Agent to the live target's physical reality, preventing its predictive engine from hallucinating based on pre-trained memory.
   
@@ -121,9 +120,5 @@ This is exactly why this skill web-app-pentester-refined.md was built the way it
 - deepseek-v4-pro
 - kimi-k2.6
 - qwen3.5
-
-
-
-
 
 
