@@ -1,6 +1,6 @@
 ![Michos](https://github.com/hiperesfera/Michos/raw/main/img/michos.png)
 
-Penetration testing  often involves sensitive targets, data, and vulnerability details. Even though most cloud LLM providers exclude API traffic from model training by default, data still transits and is temporarily processed on third-party infrastructure. This could conflict with client data requirements, regulated environments, or even air-gapped environments where connectivity to external endpoints is not even possible. Running a model locally via Ollama ensures that all prompts, tool outputs, and findings stay entirely within your own infrastructure, eliminating external dependencies and the risk of data exposure
+Penetration testing  often involves sensitive targets, data, and vulnerability details. Even though most cloud LLM providers exclude API traffic from model training by default, data still transits and is temporarily processed on third-party infrastructure. This could conflict with client data requirements, regulated environments, or even air-gapped environments where connectivity to external endpoints is not even possible. Running a model locally via [Ollama](https://ollama.com) ensures that all prompts, tool outputs, and findings stay entirely within your own infrastructure, eliminating external dependencies and the risk of data exposure
 
 In addition, by adopting open-weight models, we democratise the power of advanced AI, whether you deploy them locally for maximum privacy or in the cloud for greater scale. While there is a lot of hype surrounding proprietary models like Mythos, the reality is that anyone can now build highly capable agents using open-weight alternatives. It is only a matter of time before these models reach parity with current top-tier proprietary offerings such, creating a dual-use reality that must be accounted for in every security strategy.
 
@@ -9,13 +9,13 @@ Oh, and why **Michos**? Consider it a playful parody of Mythos, as 'micho' is th
 
 ## High-level Architecture
 
-A Docker-based setup that exposes Kali Linux penetration testing tools through an MCP server, enabling AI agents built with OpenCode to perform security assessments and automated penetration testing tasks leveraging Ollama local and cloud open-weight models. 
+A Docker-based setup that exposes Kali Linux penetration testing tools through an MCP server, enabling AI agents built with [OpenCode](https://opencode.ai) to perform security assessments and automated penetration testing tasks leveraging Ollama local and cloud open-weight models. 
 
 This project combines:
 
 - **Kali Linux Docker Container**: Running essential penetration testing tools [Kali Docker image](https://hub.docker.com/repository/docker/hiperesfera/kali-mcp/)
 - **MCP Kali Server**: Exposing Kali tools via MCP ([Wh0am123/MCP-Kali-Server](https://github.com/Wh0am123/MCP-Kali-Server))
-- **OpenCode Agent**: An AI agent that can execute security tools and automate tasks based on a defined web-app pentest "skill"
+- **OpenCode Agent**: An AI agent that can execute security tools and automate tasks based on the [`web-app-pentester.md`](https://github.com/hiperesfera/Michos/blob/main/skills/web-app-pentester.md) skill
 - **Ollama**: Running open models locally or in the cloud, providing the LLM backend for the OpenCode agent
 
 ```mermaid
