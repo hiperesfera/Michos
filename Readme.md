@@ -20,7 +20,7 @@ This project combines:
 
 ```mermaid
 flowchart LR
-    User(["User"]) --> Agent
+    User(["👤 User"]) --> Agent
 
     subgraph Local["Local Machine"]
         Agent["OpenCode Agent"]
@@ -41,11 +41,11 @@ flowchart LR
         API -->|"subprocess"| Tools
     end
 
-    Tools -->|"HTTP/S"| Target(["Target\nWeb App"])
+    Tools --> Target(["Target\nWeb App"])
 
     style OllamaC fill:#d0e8f1,stroke:#2496ed,stroke-width:2px
     style KaliC fill:#d0e8f1,stroke:#2496ed,stroke-width:2px
-    style Target fill:#e74c3c,stroke:#c0392b,color:#fff
+    style Target fill:#f1948a,stroke:#e74c3c,color:#000
 ```
   
 ## How to use it
