@@ -18,9 +18,6 @@ This project combines:
 - **OpenCode Agent**: An AI agent that can execute security tools and automate tasks based on a defined web-app pentest "skill"
 - **Ollama**: Running open models locally or in the cloud, providing the LLM backend for the OpenCode agent
 
-![PlantUML model](https://img.plantuml.biz/plantuml/png/RP9DJyCm38Rl-HKMft7ek4zJjJ6GG82eQ8-zXCJhehf9b6PC4-A_awGTBO9R_Fhnnsjbqtlk_B4ZHhZtu0qurHmyIELGU6KqwrkbBNUy0s4wQpHgN_ep8KI0wuRmFmG-6S2jSH9TejThOsCxJdaEalS7bEoBJVZLAn7lEEp872LqHYBrLy1x457u2zRwpeWMNM9CakRGin6Svcqe2Yd-rSkYtWKHjas8QrssYcW59tpFkBLPo7hiFRfb9uT1GH61d_TusHLGelj0L-k581N4fJrVrphjaCewOUSLJvmKR8l7mFUfSE1dXjf0p2igxXhqSQ-mLgqJCmGitGVMcJGddUNZAM053rLLb6mCVzBJ6G8o74dfFRfW2oSucunU7b7Dev5G5nqNpdWZ3B4efLpSUPnxytPVLYm9by73jcD-KGQxR8DQXe_t3G00) 
-
-
 ```mermaid
 flowchart LR
     User(["User"]) --> Agent
