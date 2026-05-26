@@ -26,7 +26,7 @@ This project combines:
 
     `curl -fsSL https://opencode.ai/install | bash`
 
-2. Clone this repo, it contains the skill, the [Kali Docker file](https://github.com/hiperesfera/Michos/blob/main/Dockerfile) and the [opencode configuration](https://github.com/hiperesfera/Michos/blob/main/opencode.json) to use Ollama
+2. Clone this repo, it contains the [`web-app-pentester.md`](https://github.com/hiperesfera/Michos/blob/main/skills/web-app-pentester.md) skill, the [Kali Docker file](https://github.com/hiperesfera/Michos/blob/main/Dockerfile) and the [opencode configuration](https://github.com/hiperesfera/Michos/blob/main/opencode.json) to use Ollama
 
     `git clone https://github.com/hiperesfera/AI_Agent_Pentest`
 
@@ -41,9 +41,7 @@ This project combines:
     DEFAULT_REQUEST_TIMEOUT = 660  # seconds — keep ~60s above COMMAND_TIMEOUT
     ```
 
-    > [!NOTE]
-    > 
-    > Keep `DEFAULT_REQUEST_TIMEOUT` a bit higher than `COMMAND_TIMEOUT`, so the HTTP connection does not drop before the server has a chance to return the command's output.
+    **Note:** Keep `DEFAULT_REQUEST_TIMEOUT` a bit higher than `COMMAND_TIMEOUT`, so the HTTP connection does not drop before the server has a chance to return the command's output.
 
 4. Build and run the Kali Docker image. Note that I am adding an extra option to manually adjust the MCP timeout in the *MCP-Kali-Server/server.py* so we can adjust that via env variable when running the container.
    
@@ -83,8 +81,10 @@ This project combines:
 
     `OPENCODE_CONFIG=.opencode.json opencode -m ollama/deepseek-v4-pro:cloud run "Which model are you running ?"`
 
-    Response: 
+    Response:
+   
     > build · deepseek-v4-pro:cloud
+    >
     > I'm running on deepseek-v4-pro:cloud (model ID: ollama/deepseek-v4-pro:cloud).
 
 
