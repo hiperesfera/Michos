@@ -13,7 +13,7 @@ A Docker-based setup that exposes Kali Linux penetration testing tools through a
 
 This project combines:
 
-- **Kali Linux Docker Container**: Running essential penetration testing tools[Kali Docker image](https://hub.docker.com/repository/docker/hiperesfera/kali-mcp/)
+- **Kali Linux Docker Container**: Running essential penetration testing tools [Kali Docker image](https://hub.docker.com/repository/docker/hiperesfera/kali-mcp/)
 - **MCP Kali Server**: Exposing Kali tools via MCP ([Wh0am123/MCP-Kali-Server](https://github.com/Wh0am123/MCP-Kali-Server))
 - **OpenCode Agent**: An AI agent that can execute security tools and automate tasks based on a defined web-app pentest "skill"
 - **Ollama**: Running open models locally or in the cloud, providing the LLM backend for the OpenCode agent
@@ -80,7 +80,7 @@ This project combines:
     `docker exec -it ollama ollama signin`
 
 
-    Test Ollama model using the opencode configuration example `opencode.json` to load Ollama models
+    Quick test using the `opencode.json` configuration example to load Ollama models
 
     `OPENCODE_CONFIG=.opencode.json opencode -m ollama/deepseek-v4-pro:cloud run "Which model are you running ?"`
 
