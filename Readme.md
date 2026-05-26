@@ -80,13 +80,7 @@ This project combines:
     `docker exec -it ollama ollama signin`
 
 
-    Test Ollama model
-
-    > [!NOTE]
-    > Example using Ollama, refer to the opencode configuration example `opencode.json` to load local Ollama models
-    >
-    > `OPENCODE_CONFIG=.opencode.json opencode -m ollama/deepseek-v4-pro:cloud run ...`
-
+    Test Ollama model using the opencode configuration example `opencode.json` to load Ollama models
 
     `OPENCODE_CONFIG=.opencode.json opencode -m ollama/deepseek-v4-pro:cloud run "Which model are you running ?"`
 
