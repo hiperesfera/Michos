@@ -127,9 +127,7 @@ flowchart TD
 
 A curated list of vulnerable web applications is available in the [OWASP Vulnerable Web Applications Directory](https://vwad.owasp.org/). While many of these web apps can run in Docker on my local machine, I decided to use online  web apps for simplicity and real-world experience (external app, network latency, ISP blocks, etc.). There is a big caveat here: most of these web apps are likely part of the training for these models; in other words, the findings are things the model already knows or remembers. 
 
-LLMs are trained on vast amounts of internet data, which includes CVE databases, exploit write-ups, GitHub repositories, and bug bounty reports. If an application or its underlying middleware has been publicly available and discussed before the model's knowledge cutoff date, the model already "knows" about it.
-
-In other words, when you point the agent at the target, it doesn't start with a blank slate. Its neural network strongly associates the target's software fingerprint with specific known vulnerabilities.
+LLMs are trained on vast amounts of internet data, which includes CVE databases, exploit write-ups, GitHub repositories, and bug bounty reports. If an application or its underlying middleware has been publicly available and discussed before the model's knowledge cutoff date, the model already "knows" about it. In other words, when you point the agent at the target, it doesn't start with a blank slate. Its neural network strongly associates the target's software fingerprint with specific known vulnerabilities.
 
 ### How to defend against it?
 
@@ -154,4 +152,29 @@ This is exactly why this skill [`web-app-pentester-refined.md`](https://github.c
 - kimi-k2.6
 - qwen3.5
 
+## Running Scans
+
+Before each run, restart the Kali container to ensure a clean state and update tool databases:
+
+```bash
+docker stop kali-mcp
+docker run --cap-add NET_RAW --cap-add NET_ADMIN --rm -d --name kali-mcp -e COMMAND_TIMEOUT=300 -p 5000:5000 kali-mcp
+docker exec kali-mcp wpscan --update
+```
+
+Run the pentest skill against a target using Ollama cloud models. The `OPENCODE_CONFIG` variable loads the Ollama provider configuration:
+
+```bash
+OPENCODE_CONFIG=.opencode.json opencode -m ollama/kimi-k2.6:cloud run "Target URL: http://zero.webappsecurity.com, Mode:pentest" --file skills/web-app-pentester.md
+
+OPENCODE_CONFIG=.opencode.json opencode -m ollama/qwen3.5:cloud run "Target URL: http://zero.webappsecurity.com, Mode:pentest" --file skills/web-app-pentester.md
+
+OPENCODE_CONFIG=.opencode.json opencode -m ollama/deepseek-v4-pro:cloud run "Target URL: http://zero.webappsecurity.com, Mode:pentest" --file skills/web-app-pentester.md
+```
+
+For comparison against a proprietary model (requires Anthropic API key):
+
+```bash
+opencode -m anthropic/claude-opus-4-7 run "Target URL: http://zero.webappsecurity.com, Mode:pentest" --file skills/web-app-pentester.md
+```
 
