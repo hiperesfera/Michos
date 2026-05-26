@@ -80,19 +80,19 @@ This project combines:
     `docker exec -it ollama ollama signin`
 
 
-Test Ollama model
+    Test Ollama model
 
-> [!NOTE]
-> Example using Ollama, refer to the opencode configuration example `opencode.json` to load local Ollama models
->
-> `OPENCODE_CONFIG=.opencode.json opencode -m ollama/qwen3.5:cloud run ...`
+    > [!NOTE]
+    > Example using Ollama, refer to the opencode configuration example `opencode.json` to load local Ollama models
+    >
+    > `OPENCODE_CONFIG=.opencode.json opencode -m ollama/deepseek-v4-pro:cloud run ...`
 
 
-`OPENCODE_CONFIG=.opencode.json opencode -m ollama/qwen3.5:cloud run "Which model are you running ?"`
+    `OPENCODE_CONFIG=.opencode.json opencode -m ollama/deepseek-v4-pro:cloud run "Which model are you running ?"`
 
-Response: 
-> build · qwen3.5:cloud
-> I'm running on qwen3.5:cloud (model ID: ollama/qwen3.5:cloud).
+    Response: 
+    > build · deepseek-v4-pro:cloud
+    > I'm running on deepseek-v4-pro:cloud (model ID: ollama/deepseek-v4-pro:cloud).
 
 
 
