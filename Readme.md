@@ -19,6 +19,37 @@ This project combines:
 - **Ollama**: Running open models locally or in the cloud, providing the LLM backend for the OpenCode agent
 
 ![PlantUML model](https://img.plantuml.biz/plantuml/png/RP9DJyCm38Rl-HKMft7ek4zJjJ6GG82eQ8-zXCJhehf9b6PC4-A_awGTBO9R_Fhnnsjbqtlk_B4ZHhZtu0qurHmyIELGU6KqwrkbBNUy0s4wQpHgN_ep8KI0wuRmFmG-6S2jSH9TejThOsCxJdaEalS7bEoBJVZLAn7lEEp872LqHYBrLy1x457u2zRwpeWMNM9CakRGin6Svcqe2Yd-rSkYtWKHjas8QrssYcW59tpFkBLPo7hiFRfb9uT1GH61d_TusHLGelj0L-k581N4fJrVrphjaCewOUSLJvmKR8l7mFUfSE1dXjf0p2igxXhqSQ-mLgqJCmGitGVMcJGddUNZAM053rLLb6mCVzBJ6G8o74dfFRfW2oSucunU7b7Dev5G5nqNpdWZ3B4efLpSUPnxytPVLYm9by73jcD-KGQxR8DQXe_t3G00) 
+
+
+```mermaid
+flowchart LR
+    User(["User"]) --> Agent
+
+    subgraph Local["Local Machine"]
+        Agent["OpenCode Agent"]
+        MCP["client.py\nMCP Server"]
+
+        subgraph OllamaC["Docker: ollama"]
+            Ollama["Ollama\nopen-weight LLM"]
+        end
+
+        subgraph KaliC["Docker: kali-mcp"]
+            API["server.py\nFlask REST API :5000"]
+            Tools["Kali Tools\nnmap · sqlmap · hydra\nnikto · gobuster · dirb"]
+        end
+
+        Agent <-->|"HTTP REST :11434"| Ollama
+        Agent <-->|"MCP protocol"| MCP
+        MCP <-->|"HTTP REST :5000"| API
+        API -->|"subprocess"| Tools
+    end
+
+    Tools -->|"HTTP/S"| Target(["Target\nWeb App"])
+
+    style OllamaC fill:#d0e8f1,stroke:#2496ed,stroke-width:2px
+    style KaliC fill:#d0e8f1,stroke:#2496ed,stroke-width:2px
+    style Target fill:#e74c3c,stroke:#c0392b,color:#fff
+```
   
 ## How to use it
 
