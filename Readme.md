@@ -44,12 +44,15 @@ This project combines:
     > [!NOTE]
     > Keep `DEFAULT_REQUEST_TIMEOUT` a bit higher than `COMMAND_TIMEOUT`, so the HTTP connection does not drop before the server has a chance to return the command's output.
 
-6. Build and run the Kali Docker image. Note that I am adding an extra option to manually adjust the MCP timeout in the *MCP-Kali-Server/server.py* so we can adjust that via env variable when running the container
-
-    > RUN sed -i 's|^COMMAND_TIMEOUT = 180.*|COMMAND_TIMEOUT = int(os.environ.get("COMMAND_TIMEOUT", 600))|' server.py
-    > ENV COMMAND_TIMEOUT=600
+6. Build and run the Kali Docker image. Note that I am adding an extra option to manually adjust the MCP timeout in the *MCP-Kali-Server/server.py* so we can adjust that via env variable when running the container.
+   
+    ```
+    RUN sed -i 's|^COMMAND_TIMEOUT = 180.*|COMMAND_TIMEOUT = int(os.environ.get("COMMAND_TIMEOUT", 600))|' server.py
+    ENV COMMAND_TIMEOUT=600
+    ```
 
     `docker build --tag 'kali-mcp' .`
+   
     `docker run --cap-add NET_RAW --cap-add NET_ADMIN --rm -d --name kali-mcp -e COMMAND_TIMEOUT=300 -p 5000:5000 kali-mcp`
    
     Alternatively, you can pull it from my [Docker Hub](https://hub.docker.com/repository/docker/hiperesfera/kali-mcp/)
@@ -60,14 +63,18 @@ This project combines:
 8. Pull, configure and run the Ollama Docker image 
 
     `docker pull ollama/ollama`
+   
     `docker run --rm -d --name ollama -p 11434:11434 ollama/ollama`
 
 
     6. Pull the models into Ollama.
 
     `docker exec -it ollama ollama pull qwen3.5:cloud`
+   
     `docker exec -it ollama ollama pull deepseek-v4-pro:cloud`
+   
     `docker exec -it ollama ollama pull kimi-k2.6:cloud`
+   
     `docker exec -it ollama ollama signin`
 
 
