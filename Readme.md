@@ -19,7 +19,7 @@ This project combines:
 - **Ollama**: Running open models locally or in the cloud, providing the LLM backend for the OpenCode agent
 
 ```mermaid
-flowchart LR
+flowchart TD
     User(["👤 User"]) --> Agent
 
     subgraph Local["Local Machine"]
