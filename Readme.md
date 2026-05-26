@@ -56,13 +56,13 @@ flowchart TD
 
 2. Clone this repo, it contains the [`web-app-pentester.md`](https://github.com/hiperesfera/Michos/blob/main/skills/web-app-pentester.md) skill, the [Kali Docker file](https://github.com/hiperesfera/Michos/blob/main/Dockerfile) and the [opencode configuration](https://github.com/hiperesfera/Michos/blob/main/opencode.json) to use Ollama
 
-    `git clone https://github.com/hiperesfera/AI_Agent_Pentest`
+    `git clone https://github.com/hiperesfera/Michos`
 
 3. Clone the MCP Kali Server and adjust timeouts
 
     `git clone https://github.com/Wh0am123/MCP-Kali-Server`
 
-    Long-running tools like nmap, sqlmap, or hydra can exceed the default limits. Edit this constant:
+    Long-running tools like nmap, sqlmap, or hydra can exceed the default limits. Edit this variable:
 
     *MCP-Kali-Server/client.py* — line 27 (how long the client waits for an HTTP response):
     ```
