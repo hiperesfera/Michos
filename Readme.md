@@ -27,12 +27,14 @@ flowchart TD
         MCP["client.py\nMCP Server"]
 
         subgraph OllamaC["Docker: ollama"]
-            Ollama["Ollama\nopen-weight LLM"]
+            Ollama["Ollama"]
+            LocalM["🖥️ Local\nllama3 · gemma · ..."]
+            Ollama --> LocalM
         end
 
         subgraph KaliC["Docker: kali-mcp"]
             API["server.py\nFlask REST API :5000"]
-            Tools["Kali Tools\nnmap · sqlmap · hydra\nnikto · gobuster · dirb"]
+            Tools["Kali Tools\nnmap · sqlmap · hydra\nnikto · gobuster · dirb · ..."]
         end
 
         Agent <-->|"HTTP REST :11434"| Ollama
@@ -41,6 +43,9 @@ flowchart TD
         API -->|"subprocess"| Tools
     end
 
+    CloudM["☁️ Cloud Models\nqwen3.5:cloud · deepseek-v4-pro:cloud · kimi-k2.6:cloud"]
+
+    Ollama -->|"API"| CloudM
     Tools --> Target(["Target\nWeb App"])
 
     style OllamaC fill:#d0e8f1,stroke:#2496ed,stroke-width:2px
