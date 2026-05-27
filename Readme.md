@@ -178,3 +178,10 @@ For comparison against a proprietary model (requires Anthropic API key):
 opencode -m anthropic/claude-opus-4-7 run "Target URL: http://zero.webappsecurity.com, Mode:pentest" --file skills/web-app-pentester.md
 ```
 
+## Results
+
+
+TBA
+
+
+More detailed results per web application can be found  under the [results](https://github.com/hiperesfera/Michos/results) folder
