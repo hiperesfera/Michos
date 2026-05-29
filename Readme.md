@@ -181,7 +181,22 @@ opencode -m anthropic/claude-opus-4-7 run "Target URL: http://zero.webappsecurit
 ## Results
 
 
-TBA
+### Global Pentester Agent Evaluation (3-App Summary)
+
+| Model | Zero Bank (Findings) | BrokenCrystals (Findings) | VulnBank (Findings) | Notable Highlights | Verdict |
+| :--- | :--- | :--- | :--- | :--- | :--- |
+| **Claude Opus** | 18 | 23 | 19 | Found live K8s tokens; correctly validated 401s on known targets. | Top Tier |
+| **DeepSeek** | 7 | 13 | 26 | Deep architectural remediation advice; effective SSRF exploitation. | Strong Runner-Up |
+| **Qwen 3.5** | 15 | 7 | 18 | Successfully extracted raw HTML tables/PII. | Basic Enumerator |
+| **Kimi k2.6** | 18 | 7 | 13 | Found Werkzeug console; fabricated Hydra results on Mail App. | Unreliable |
+
+### Severity Breakdown
+| Model | Zero Bank (Severity) | BrokenCrystals (Severity) | VulnBank (Severity) |
+| :--- | :--- | :--- | :--- |
+| **Claude** | 4C, 5H, 4M, 3L, 2I | 7C, 7H, 6M, 3L | 5C, 4H, 4M, 6L |
+| **DeepSeek** | 2C, 2H, 2M, 1L | 6C, 4H, 2M, 1I | 10C, 8H, 5M, 3L |
+| **Qwen** | 3C, 4H, 3M, 2L, 3I | 3C, 1H, 2M, 1L | 4C, 5H, 3M, 6L |
+| **Kimi** | 4C, 5H, 4M, 5L/I | 4C, 1H, 1M, 1L | 4C, 3H, 3M, 3I |
 
 
 More detailed results per web application can be found  under the [results](https://github.com/hiperesfera/Michos/results) folder
