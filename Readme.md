@@ -190,13 +190,14 @@ opencode -m anthropic/claude-opus-4-7 run "Target URL: http://zero.webappsecurit
 | **Qwen 3.5** | 15 | 7 | 18 | Successfully extracted raw HTML tables/PII. | Basic Enumerator |
 | **Kimi k2.6** | 18 | 7 | 13 | Found Werkzeug console; fabricated Hydra results on Mail App. | Unreliable |
 
-### Severity Breakdown
-| Model | Zero Bank (Severity) | BrokenCrystals (Severity) | VulnBank (Severity) |
-| :--- | :--- | :--- | :--- |
-| **Claude** | 4C, 5H, 4M, 3L, 2I | 7C, 7H, 6M, 3L | 5C, 4H, 4M, 6L |
-| **DeepSeek** | 2C, 2H, 2M, 1L | 6C, 4H, 2M, 1I | 10C, 8H, 5M, 3L |
-| **Qwen** | 3C, 4H, 3M, 2L, 3I | 3C, 1H, 2M, 1L | 4C, 5H, 3M, 6L |
-| **Kimi** | 4C, 5H, 4M, 5L/I | 4C, 1H, 1M, 1L | 4C, 3H, 3M, 3I |
 
+### Severity Breakdown (All Targets)
+
+| Model | `zero.webappsecurity.com` | `brokencrystals.com` | `vulnbank.org` |
+| :--- | :--- | :--- | :--- |
+| **Claude Opus** | **18 Total** <br> `Critical`: 4 \| `High`: 5<br>`Medium`: 4 \| `Low`: 3<br>`Info`: 2 | **23 Total** <br> `Critical`: 7 \| `High`: 7<br>`Medium`: 6 \| `Low`: 3<br>`Info`: 0 | **19 Total** <br> `Critical`: 5 \| `High`: 4<br>`Medium`: 4 \| `Low`: 6<br>`Info`: 0 |
+| **DeepSeek** | **7 Total** <br> `Critical`: 2 \| `High`: 2<br>`Medium`: 2 \| `Low`: 1<br>`Info`: 0 | **13 Total** <br> `Critical`: 6 \| `High`: 4<br>`Medium`: 2 \| `Low`: 0<br>`Info`: 1 | **26 Total** <br> `Critical`: 10 \| `High`: 8<br>`Medium`: 5 \| `Low`: 3<br>`Info`: 0 |
+| **Qwen 3.5** | **15 Total** <br> `Critical`: 3 \| `High`: 4<br>`Medium`: 3 \| `Low`: 2<br>`Info`: 3 | **7 Total** <br> `Critical`: 3 \| `High`: 1<br>`Medium`: 2 \| `Low`: 1<br>`Info`: 0 | **18 Total** <br> `Critical`: 4 \| `High`: 5<br>`Medium`: 3 \| `Low`: 6<br>`Info`: 0 |
+| **Kimi k2.6** | **18 Total** <br> `Critical`: 4 \| `High`: 5<br>`Medium`: 4 \| `Low/Info`: 5 | **7 Total** <br> `Critical`: 4 \| `High`: 1<br>`Medium`: 1 \| `Low`: 1<br>`Info`: 0 | **13 Total** <br> `Critical`: 4 \| `High`: 3<br>`Medium`: 3 \| `Info`: 3 |
 
 More detailed results per web application can be found  under the [results](https://github.com/hiperesfera/Michos/results) folder
