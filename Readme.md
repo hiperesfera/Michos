@@ -1,6 +1,6 @@
 ![Michos](https://github.com/hiperesfera/Michos/raw/main/img/michos.png)
 
-Michos is an automated penetration testing agent that connects large language models (via Ollama) with Kali linux through the Model Context Protocol (MCP), enabling fully automated web application security assessments.S
+Michos is an automated penetration testing agent that connects large language models (via Ollama) with Kali linux through the Model Context Protocol (MCP), enabling fully automated web application security assessments.
 
 Oh, and why **Michos**? Consider it a playful parody of Mythos, as 'micho' is the [Galician](https://en.wikipedia.org/wiki/Galician_language) word for a kitten.
 
