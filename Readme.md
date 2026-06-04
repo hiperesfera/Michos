@@ -16,13 +16,7 @@ Launch the pentest agent against a target. The `OPENCODE_CONFIG` variable loads 
 OPENCODE_CONFIG=.opencode.json opencode -m ollama/deepseek-v4-pro:cloud run "Target URL: http://zero.webappsecurity.com, Mode:pentest" --file skills/web-app-pentester.md
 ```
 
-<<<<<<< HEAD
-![demo](img/michos.gif)
-
 [View full DeepSeek-v4-pro report for zero.webappsecurity.com](results/webappsecurity/zero.webappsecurity.com-deepseek-v4-pro-report.md)
-=======
-<video src="img/michos.mov" controls></video>
->>>>>>> 12b670d (add video)
 
 ## High-level Architecture
 
