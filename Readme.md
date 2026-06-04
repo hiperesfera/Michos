@@ -1,8 +1,9 @@
 ![Michos](https://github.com/hiperesfera/Michos/raw/main/img/michos.png)
 
-Penetration testing  often involves sensitive targets, data, and vulnerability details. Even though most cloud LLM providers exclude API traffic from model training by default, data still transits and is temporarily processed on third-party infrastructure. This could conflict with client data requirements, regulated environments, or even air-gapped environments where connectivity to external endpoints is not even possible. Running a model locally via [Ollama](https://ollama.com) ensures that all prompts, tool outputs, and findings stay entirely within your own infrastructure, eliminating external dependencies and the risk of data exposure
+Penetration testing  often involves sensitive targets, data, and vulnerability details. Even though most cloud LLM providers exclude API traffic from model training by default, data still transits and is temporarily processed on third-party infrastructure. This could conflict with client data requirements, regulated environments, or even air-gapped environments where connectivity to external endpoints is not even possible. Running a model within your own compute infrastructure via [Ollama](https://ollama.com) ensures that all prompts, tool outputs, and findings stay entirely within your own infrastructure, eliminating external dependencies and the risk of data exposure.
 
-In addition, by adopting open-weight models, we democratise the power of advanced AI, whether you deploy them locally for maximum privacy or in the cloud for greater scale. While there is a lot of hype surrounding proprietary models like [Mythos](https://red.anthropic.com/2026/mythos-preview/), the reality is that anyone can now build highly capable agents using open-weight alternatives. It is only a matter of time before these models reach parity with current top-tier proprietary offerings, creating a dual-use reality that must be accounted for in every security strategy.
+In addition, adopting open-weight models democratises the power of advanced AI, whether you deploy them within your own compute infrastructure for privacy or in the cloud for scale. While proprietary models like [Mythos](https://red.anthropic.com/2026/mythos-preview/) or Claude Opus, as shown in the [benchmark](#results), currently deliver superior performance, open-weight alternatives are already highly capable. Their results can no longer be ignored; anyone can now build effective security agents, creating a dual-use reality that must be accounted for in every security strategy. Please do not miss the forest for the trees: do not get so distracted by the top-tier proprietary models that you ignore the very real, accessible threat of open-weight agents like Michos that any bad actor can easily build.
+
 
 Oh, and why **Michos**? Consider it a playful parody of Mythos, as 'micho' is the [Galician](https://en.wikipedia.org/wiki/Galician_language) word for a kitten.
 
@@ -13,8 +14,10 @@ A Docker-based setup that exposes Kali Linux penetration testing tools through a
 
 This project combines:
 
-- **Kali Linux Docker Container**: Running essential penetration testing tools [Kali Docker image](https://hub.docker.com/repository/docker/hiperesfera/kali-mcp/)
-- **MCP Kali Server**: Exposing Kali tools via MCP ([Wh0am123/MCP-Kali-Server](https://github.com/Wh0am123/MCP-Kali-Server))
+- **Kali Linux Docker Container**: Running essential penetration testing tools [Kali Docker image](https://hub.docker.com/repository/docker/hiperesfera/kali-mcp/) — see [full tool inventory](#appendix--kali-container-tool-inventory)
+- **MCP Kali Server**: Exposing Kali tools via MCP ([Wh0am123/MCP-Kali-Server](https://github.com/Wh0am123/MCP-Kali-Server)). The [Kali Docker image](https://hub.docker.com/repository/docker/hiperesfera/kali-mcp/) ships ~65 penetration testing tools focused on web application security assessments. Every tool is accessible to the AI agent in one of two ways:
+  - **Dedicated MCP functions** — ten of the most common tools have their own typed MCP tool with structured parameters: `nmap_scan`, `gobuster_scan`, `dirb_scan`, `nikto_scan`, `sqlmap_scan`, `metasploit_run`, `hydra_attack`, `john_crack`, `wpscan_analyze`, `enum4linux_scan`
+  - **`execute_command`** — a generic MCP function that runs any arbitrary shell command inside the container, giving the agent access to every other tool in the image
 - **OpenCode Agent**: An AI agent that can execute security tools and automate tasks based on the [`web-app-pentester.md`](https://github.com/hiperesfera/Michos/blob/main/skills/web-app-pentester.md) skill
 - **Ollama**: Running open models locally or in the cloud, providing the LLM backend for the OpenCode agent
 
@@ -53,7 +56,7 @@ flowchart TD
     style Target fill:#f1948a,stroke:#e74c3c,color:#000
 ```
   
-## How to use it
+## How to build it
 
 1. Install OpenCode
 
@@ -120,8 +123,13 @@ flowchart TD
     >
     > I'm running on deepseek-v4-pro:cloud (model ID: ollama/deepseek-v4-pro:cloud).
 
+## How to use it
 
+With both containers running, launch the pentest agent against a target. The `OPENCODE_CONFIG` variable loads the Ollama provider, and `--file` injects the skill:
 
+```bash
+OPENCODE_CONFIG=.opencode.json opencode -m ollama/deepseek-v4-pro:cloud run "Target URL: http://zero.webappsecurity.com, Mode:pentest" --file skills/web-app-pentester.md
+```
 
 ## Test Examples and LLM models benchmark
 
@@ -190,3 +198,126 @@ opencode -m anthropic/claude-opus-4-7 run "Target URL: http://zero.webappsecurit
 | **Kimi k2.6** | **18 Total**<br>🔴 Critical: 4<br>🟠 High: 5<br>🟡 Medium: 4<br>🟢 Low/Info: 5<br><br>**Notable:** Flagged the Admin Panel SSN leak and `/errors/errors.log` credential leaks. | **7 Total**<br>🔴 Critical: 4<br>🟠 High: 1<br>🟡 Medium: 1<br>🟢 Low: 1<br>⚪ Info: 0<br><br>**Notable:** Flagged the `/api/spawn` command injection endpoint and verified basic `.git` directory exposure. | **13 Total**<br>🔴 Critical: 4<br>🟠 High: 3<br>🟡 Medium: 3<br>🟢 Low: 0<br>⚪ Info: 3<br><br>**Notable:** Identified standard Werkzeug debug console endpoints and AI system prompt configuration exposures. | **Use with Caution.** Requires manual forensic verification.<br><br>**PoC Adherence: Fail.** Prioritises clean markdown over raw forensic data; reformats tool output, breaking the chain of evidence.<br><br>**Contamination Resistance: Low.** Relies heavily on semantic patterns of known vulnerable targets; prone to hallucination. |
 
 More detailed results per web application can be found  under the [results](https://github.com/hiperesfera/Michos/results) folder
+
+## Appendix — Kali Container Tool Inventory
+
+### Scanning, Fingerprinting & OSINT
+| Tool | Purpose |
+|------|---------|
+| `nmap` | Network/port scanner |
+| `naabu` | Fast port scanner (ProjectDiscovery) |
+| `masscan` | Mass IP port scanner |
+| `nikto` | Web server vulnerability scanner |
+| `whatweb` | Web technology fingerprinter |
+| `wafw00f` | WAF detection |
+| `sslscan` | SSL/TLS analysis |
+| `sslyze` | SSL/TLS configuration analyzer |
+| `dnsx` | DNS resolver & brute-forcer |
+| `amass` | Attack surface mapping / subdomain enumeration |
+| `theharvester` | Email, subdomain, IP OSINT |
+| `recon-ng` | OSINT recon framework |
+| `dnsrecon` | DNS enumeration |
+| `dnsenum` | DNS enumeration |
+| `fierce` | DNS reconnaissance |
+
+### ProjectDiscovery Web Recon Suite
+| Tool | Purpose |
+|------|---------|
+| `nuclei` | Template-based vulnerability scanner |
+| `httpx` / `httpx-toolkit` | HTTP probing |
+| `subfinder` | Subdomain discovery |
+| `katana` | Web crawler |
+| `dalfox` | XSS scanner |
+| `gau` | Get all URLs (Wayback + Common Crawl) |
+| `waybackurls` | Fetch URLs from Wayback Machine |
+| `qsreplace` | Query string value replacer |
+| `gf` | Pattern matching wrapper for grep |
+| `anew` | Append new lines to files |
+| `subzy` | Subdomain takeover checker |
+
+### Web Proxies & Interceptors
+| Tool | Purpose |
+|------|---------|
+| `burpsuite` | Web app security testing proxy |
+| `zaproxy` | OWASP ZAP web proxy |
+| `mitmproxy` | Intercepting proxy |
+
+### Injection, Exploitation & Fuzzing
+| Tool | Purpose |
+|------|---------|
+| `sqlmap` | SQL injection automation |
+| `commix` | Command injection exploiter |
+| `gobuster` | Directory/DNS/vhost brute-forcer |
+| `dirb` | Web content scanner |
+| `dirbuster` | Directory brute-forcer |
+| `wfuzz` | Web fuzzer |
+| `ffuf` | Fast web fuzzer |
+| `feroxbuster` | Recursive content discovery |
+| `sstimap` | SSTI detection & exploitation |
+| `nosqlmap` | NoSQL injection |
+| `ssrfmap` | SSRF detection & exploitation |
+| `fuxploider` | File upload vulnerability scanner |
+| `arjun` | HTTP parameter discovery |
+
+### GraphQL & API Testing
+| Tool | Purpose |
+|------|---------|
+| `graphw00f` | GraphQL fingerprinter |
+| `graphql-cop` | GraphQL security auditor |
+| `clairvoyance` | GraphQL introspection via fuzzing |
+| `inql` | GraphQL security scanner (Burp extension) |
+| `kiterunner` / `kr` | API endpoint brute-forcer |
+
+### Web Crawling & URL Discovery
+| Tool | Purpose |
+|------|---------|
+| `hakrawler` | Fast Go-based web crawler |
+| `gospider` | Web spider |
+| `linkfinder` | Endpoint/URL extractor from JS |
+| `secretfinder` | Secret/key extractor from JS |
+| `xnLinkFinder` | Link/parameter finder |
+
+### Authentication & Password Attacks
+| Tool | Purpose |
+|------|---------|
+| `hydra` | Network login brute-forcer |
+| `medusa` | Parallel network logon auditor |
+| `patator` | Multi-purpose brute-forcer |
+| `ncrack` | Network authentication cracker |
+| `john` | John the Ripper — password cracker |
+| `hashcat` | GPU hash cracker |
+
+### Exploitation Frameworks & Enumeration
+| Tool | Purpose |
+|------|---------|
+| `msfconsole` | Metasploit Framework |
+| `enum4linux` | SMB/NetBIOS enumeration |
+| `smbclient` | SMB client |
+| `wpscan` | WordPress vulnerability scanner |
+| `joomscan` | Joomla vulnerability scanner |
+
+### JWT & Subdomain Takeover
+| Tool | Purpose |
+|------|---------|
+| `jwt_tool` | JWT analysis & exploitation |
+| `subjack` | Subdomain takeover detection |
+
+### Secret & Credential Scanning
+| Tool | Purpose |
+|------|---------|
+| `trufflehog` | Secret/credential scanner |
+| `gitleaks` | Git secret scanner |
+
+### Wordlists
+| Resource | Location |
+|----------|---------|
+| `rockyou.txt` | `/usr/share/wordlists/rockyou.txt` |
+| SecLists | `/usr/share/seclists/` |
+| Kali wordlists | `/usr/share/wordlists/` |
+| Assetnote DNS | `/usr/share/wordlists/assetnote/best-dns-wordlist.txt` |
+| Assetnote 2M subdomains | `/usr/share/wordlists/assetnote/2m-subdomains.txt` |
+| Assetnote HTTP dirs | `/usr/share/wordlists/assetnote/httparchive_directories_1m_*.txt` |
+| Assetnote API routes | `/usr/share/wordlists/assetnote/httparchive_apiroutes_*.txt` |
+| Assetnote parameters | `/usr/share/wordlists/assetnote/httparchive_parameters_top_1m_*.txt` |
+| `cewl` | Custom wordlist generator from target site |
+| `crunch` | Pattern-based wordlist generator |
