@@ -10,13 +10,15 @@ Oh, and why **Michos**? Consider it a playful parody of Mythos, as 'micho' is th
 
 ## How to use it
 
-With both containers running, launch the pentest agent against a target. The `OPENCODE_CONFIG` variable loads the Ollama provider, and `--file` injects the skill:
+Launch the pentest agent against a target. The `OPENCODE_CONFIG` variable loads the Ollama provider, and `--file` injects the skill:
 
 ```bash
 OPENCODE_CONFIG=.opencode.json opencode -m ollama/deepseek-v4-pro:cloud run "Target URL: http://zero.webappsecurity.com, Mode:pentest" --file skills/web-app-pentester.md
 ```
 
-<video src="img/michos.mov" controls></video>
+![demo](img/michos.gif)
+
+[View full DeepSeek-v4-pro report for zero.webappsecurity.com](results/webappsecurity/zero.webappsecurity.com-deepseek-v4-pro-report.md)
 
 ## High-level Architecture
 
