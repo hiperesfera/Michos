@@ -1,11 +1,17 @@
 ![Michos](https://github.com/hiperesfera/Michos/raw/main/img/michos.png)
 
+Michos is an automated penetration testing agent that connects large language models (via Ollama) with Linux security tools through the Model Context Protocol (MCP), enabling fully automated web application security assessments.
+
+Oh, and why **Michos**? Consider it a playful parody of Mythos, as 'micho' is the [Galician](https://en.wikipedia.org/wiki/Galician_language) word for a kitten.
+
+
+## Why Michos ?
+
 Penetration testing  often involves sensitive targets, data, and vulnerability details. Even though most cloud LLM providers exclude API traffic from model training by default, data still transits and is temporarily processed on third-party infrastructure. This could conflict with client data requirements, regulated environments, or even air-gapped environments where connectivity to external endpoints is not even possible. Running a model within your own compute infrastructure via [Ollama](https://ollama.com) ensures that all prompts, tool outputs, and findings stay entirely within your own infrastructure, eliminating external dependencies and the risk of data exposure.
 
 In addition, adopting open-weight models democratises the power of advanced AI, whether you deploy them within your own compute infrastructure for privacy or in the cloud for scale. While proprietary models like [Mythos](https://red.anthropic.com/2026/mythos-preview/) or Claude Opus, as shown in the [benchmark](#results), currently deliver superior performance, open-weight alternatives are already highly capable. Their results can no longer be ignored; anyone can now build effective security agents, creating a dual-use reality that must be accounted for in every security strategy. Please do not miss the forest for the trees: do not get so distracted by the top-tier proprietary models that you ignore the very real, accessible threat of open-weight agents like Michos that any bad actor can easily build.
 
 
-Oh, and why **Michos**? Consider it a playful parody of Mythos, as 'micho' is the [Galician](https://en.wikipedia.org/wiki/Galician_language) word for a kitten.
 
 
 ## How to use it
