@@ -16,6 +16,8 @@ With both containers running, launch the pentest agent against a target. The `OP
 OPENCODE_CONFIG=.opencode.json opencode -m ollama/deepseek-v4-pro:cloud run "Target URL: http://zero.webappsecurity.com, Mode:pentest" --file skills/web-app-pentester.md
 ```
 
+<video src="img/michos.mov" controls></video>
+
 ## High-level Architecture
 
 A Docker-based setup that exposes Kali Linux penetration testing tools through an MCP server, enabling AI agents built with [OpenCode](https://opencode.ai) to perform security assessments and automated penetration testing tasks leveraging Ollama local and cloud open-weight models. 
