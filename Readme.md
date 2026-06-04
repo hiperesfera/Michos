@@ -8,6 +8,14 @@ In addition, adopting open-weight models democratises the power of advanced AI, 
 Oh, and why **Michos**? Consider it a playful parody of Mythos, as 'micho' is the [Galician](https://en.wikipedia.org/wiki/Galician_language) word for a kitten.
 
 
+## How to use it
+
+With both containers running, launch the pentest agent against a target. The `OPENCODE_CONFIG` variable loads the Ollama provider, and `--file` injects the skill:
+
+```bash
+OPENCODE_CONFIG=.opencode.json opencode -m ollama/deepseek-v4-pro:cloud run "Target URL: http://zero.webappsecurity.com, Mode:pentest" --file skills/web-app-pentester.md
+```
+
 ## High-level Architecture
 
 A Docker-based setup that exposes Kali Linux penetration testing tools through an MCP server, enabling AI agents built with [OpenCode](https://opencode.ai) to perform security assessments and automated penetration testing tasks leveraging Ollama local and cloud open-weight models. 
@@ -122,14 +130,6 @@ flowchart TD
     > build · deepseek-v4-pro:cloud
     >
     > I'm running on deepseek-v4-pro:cloud (model ID: ollama/deepseek-v4-pro:cloud).
-
-## How to use it
-
-With both containers running, launch the pentest agent against a target. The `OPENCODE_CONFIG` variable loads the Ollama provider, and `--file` injects the skill:
-
-```bash
-OPENCODE_CONFIG=.opencode.json opencode -m ollama/deepseek-v4-pro:cloud run "Target URL: http://zero.webappsecurity.com, Mode:pentest" --file skills/web-app-pentester.md
-```
 
 ## Test Examples and LLM models benchmark
 
