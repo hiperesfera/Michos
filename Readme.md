@@ -139,7 +139,7 @@ LLMs are trained on vast amounts of internet data, which includes CVE databases,
 
 ### How to defend against it?
 
-This is exactly why this skill [`web-app-pentester-refined.md`](https://github.com/hiperesfera/Michos/blob/main/skills/web-app-pentester.md) was built the way it is:
+This is exactly why this skill [`web-app-pentester.md`](https://github.com/hiperesfera/Michos/blob/main/skills/web-app-pentester.md) was built the way it is:
 
 - State Separation (via Raw Extraction): Forcing the agent to write tool output to a file and read it back creates a hard execution break. This constrains the Agent to the live target's physical reality, preventing its predictive engine from hallucinating based on pre-trained memory.
   
