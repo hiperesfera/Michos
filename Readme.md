@@ -151,7 +151,7 @@ This is exactly why this skill [`web-app-pentester.md`](https://github.com/hiper
 
 - Optimised Foundation Models: General chat models are designed to be helpful and conversational, making them highly prone to inventing exploits. Defending against contamination requires using models that are heavily fine-tuned for strict instruction-following and structured data extraction, such as DeepSeek-v4-pro.
 
-These techniques constrain the *final report* to on-disk evidence, but they do not prevent a contaminated model from steering the engagement from memory (e.g. picking the known endpoint and parameter) and then dressing it in real tool output. They reduce fabrication; they do not prove discovery, see [Results](#results).
+These techniques constrain the *final report* to on-disk evidence, but they do not prevent a contaminated model from steering the engagement from memory (e.g. picking the known endpoint and parameter) and then dressing it in real tool output. 
 
 ### Vulnerable Web Applications
 
