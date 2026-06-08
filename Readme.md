@@ -4,7 +4,7 @@ Michos is an automated penetration testing agent that connects large language mo
 
 Oh, and why **Michos**? Consider it a playful parody of Mythos, as 'micho' is the [Galician](https://en.wikipedia.org/wiki/Galician_language) word for a kitten.
 
-[](https://github.com/user-attachments/assets/aed7f885-52f8-482b-aa5a-e52cea531662)
+[](https://github.com/user-attachments/assets/0ff21812-cf1b-49cf-97f6-2cf05ec7623e)
 
 ## Why Michos?
 
