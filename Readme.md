@@ -15,7 +15,7 @@ In addition, adopting open-weight models democratises the power of advanced AI, 
 
 ## How to use it
 
-The whole stack — Kali tools + MCP server, Ollama, and the OpenCode agent — runs in Docker Compose.
+The whole stack (Kali tools + MCP server, Ollama, and the OpenCode agent) runs in Docker Compose.
 
 1. Clone the repo:
 
@@ -31,7 +31,7 @@ The whole stack — Kali tools + MCP server, Ollama, and the OpenCode agent — 
 
     The `ollama signin` step is interactive (an ollama.com login), so run this from a terminal.
 
-3. Run a scan by exec-ing into the idle `opencode` container — pick a model and target:
+3. Run a scan by exec-ing into the idle `opencode` container. Pick a model and target:
 
     ```bash
     docker exec opencode opencode \
@@ -40,7 +40,7 @@ The whole stack — Kali tools + MCP server, Ollama, and the OpenCode agent — 
       --file /app/skills/web-app-pentester.md
     ```
 
-    The report lands in `./results`. Run as many scans as you like.
+    The report lands in `./results`. You can list available models and their exact naming with `docker exec opencode opencode models`.
 
 4. Tear down when finished:
 
@@ -135,7 +135,7 @@ List the models the agent can use (the `-m` values below come from this list):
 docker exec opencode opencode models
 ```
 
-Run the pentest skill against a target using Ollama cloud models — exec into the running `opencode` container and pick a model:
+Run the pentest skill against a target using Ollama cloud models. Exec into the running `opencode` container and pick a model:
 
 ```bash
 docker exec opencode opencode -m ollama/kimi-k2.6:cloud run "Target URL: http://zero.webappsecurity.com, Mode:pentest" --file /app/skills/web-app-pentester.md

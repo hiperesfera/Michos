@@ -30,6 +30,12 @@
         },
           "gemma4:e4b": {
           "name": "gemma4:e4b"
+        },
+          "nemotron-3-ultra:cloud": {
+          "name": "nemotron-3-ultra:cloud"
+        },
+          "glm-5.2:cloud": {
+          "name": "glm-5.2:cloud"
         }
       }
     }
