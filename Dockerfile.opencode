@@ -1,0 +1,19 @@
+# Official opencode image (Alpine, entrypoint "opencode", CLI 1.17.9+)
+FROM ghcr.io/anomalyco/opencode:latest
+
+# Python for the MCP Kali client + git to fetch it (Alpine has none of these)
+RUN apk add --no-cache python3 py3-pip git
+
+# MCP Kali client: provides client.py referenced by opencode's mcp config
+RUN git clone --depth 1 https://github.com/Wh0am123/MCP-Kali-Server.git /opt/MCP-Kali-Server && \
+    pip3 install --no-cache-dir --break-system-packages -r /opt/MCP-Kali-Server/requirements.txt
+
+WORKDIR /app
+COPY opencode.docker.json ./opencode.docker.json
+COPY skills/ ./skills/
+
+ENV OPENCODE_CONFIG=/app/opencode.docker.json
+
+# Keep the base image's "opencode" entrypoint so args from the compose `command`
+# or the CLI are passed straight to the opencode binary.
+ENTRYPOINT ["opencode"]

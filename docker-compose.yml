@@ -1,0 +1,36 @@
+services:
+  kali-server:
+    build:
+      context: .
+      dockerfile: Dockerfile.kali
+    image: kali-mcp
+    container_name: kali-mcp
+    cap_add:
+      - NET_RAW
+      - NET_ADMIN
+    environment:
+      - COMMAND_TIMEOUT=600
+    ports:
+      - "5000:5000"
+    restart: unless-stopped
+
+  ollama:
+    image: ollama/ollama
+    container_name: ollama
+    ports:
+      - "11434:11434"
+    restart: unless-stopped
+
+  opencode:
+    build:
+      context: .
+      dockerfile: Dockerfile.opencode
+    image: opencode-runner
+    container_name: opencode
+    depends_on:
+      - kali-server
+      - ollama
+    volumes:
+      - ./results:/results
+    working_dir: /results
+    entrypoint: ["sleep", "infinity"]

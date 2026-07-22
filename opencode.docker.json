@@ -1,13 +1,13 @@
 {
   "$schema": "https://opencode.ai/config.json",
-  "autoupdate": true,
+  "autoupdate": false,
 
   "provider": {
     "ollama": {
       "npm": "@ai-sdk/openai-compatible",
       "name": "Ollama (local)",
       "options": {
-        "baseURL": "http://127.0.0.1:11434/v1"
+        "baseURL": "http://ollama:11434/v1"
       },
       "models": {
         "llama3.1:8b": {
@@ -30,6 +30,12 @@
         },
           "gemma4:e4b": {
           "name": "gemma4:e4b"
+        },
+          "nemotron-3-ultra:cloud": {
+          "name": "nemotron-3-ultra:cloud"
+        },
+          "glm-5.2:cloud": {
+          "name": "glm-5.2:cloud"
         }
       }
     }
@@ -38,7 +44,7 @@
   "mcp": {
    "kali-server": {
      "type": "local",
-     "command": ["python3", "/home/jfonteboa/virtual_envs/secagent/MCP-Kali-Server/client.py", "--server", "http://127.0.0.1:5000"],
+     "command": ["python3", "/opt/MCP-Kali-Server/client.py", "--server", "http://kali-server:5000", "--timeout", "660"],
      "enabled": true,
      "timeout": 720000
    }

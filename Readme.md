@@ -15,11 +15,39 @@ In addition, adopting open-weight models democratises the power of advanced AI, 
 
 ## How to use it
 
-Launch the pentest agent against a target. The `OPENCODE_CONFIG` variable loads the Ollama provider, and `--file` injects the skill:
+The whole stack — Kali tools + MCP server, Ollama, and the OpenCode agent — runs in Docker Compose.
 
-```bash
-OPENCODE_CONFIG=.opencode.json opencode -m ollama/deepseek-v4-pro:cloud run "Target URL: http://zero.webappsecurity.com, Mode:pentest" --file skills/web-app-pentester.md
-```
+1. Clone the repo:
+
+    ```bash
+    git clone https://github.com/hiperesfera/Michos && cd Michos
+    ```
+
+2. Initialize the stack. This builds the images, starts all three containers, updates wpscan, signs you into Ollama, and pulls the cloud models:
+
+    ```bash
+    ./bootstrap.sh
+    ```
+
+    The `ollama signin` step is interactive (an ollama.com login), so run this from a terminal.
+
+3. Run a scan by exec-ing into the idle `opencode` container — pick a model and target:
+
+    ```bash
+    docker exec opencode opencode \
+      -m ollama/deepseek-v4-pro:cloud \
+      run "Target URL: http://zero.webappsecurity.com, Mode:pentest" \
+      --file /app/skills/web-app-pentester.md
+    ```
+
+    The report lands in `./results`. Run as many scans as you like.
+
+4. Tear down when finished:
+
+    ```bash
+    docker compose down
+    ```
+
 View full Michos pentest [report](results/webappsecurity/zero.webappsecurity.com-deepseek-v4-pro-report.md) for zero.webappsecurity.com
 
 ## High-level Architecture
@@ -70,73 +98,6 @@ flowchart TD
     style Target fill:#f1948a,stroke:#e74c3c,color:#000
 ```
   
-## How to build it
-
-1. Install OpenCode
-
-    `curl -fsSL https://opencode.ai/install | bash`
-
-2. Clone this repo, it contains the [`web-app-pentester.md`](https://github.com/hiperesfera/Michos/blob/main/skills/web-app-pentester.md) skill, the [Kali Docker file](https://github.com/hiperesfera/Michos/blob/main/Dockerfile) and the [opencode configuration](https://github.com/hiperesfera/Michos/blob/main/opencode.json) to use Ollama
-
-    `git clone https://github.com/hiperesfera/Michos`
-
-3. Clone the MCP Kali Server and adjust timeouts
-
-    `git clone https://github.com/Wh0am123/MCP-Kali-Server`
-
-    Long-running tools like nmap, sqlmap, or hydra can exceed the default limits. Edit this variable:
-
-    *MCP-Kali-Server/client.py* — line 27 (how long the client waits for an HTTP response):
-    ```
-    DEFAULT_REQUEST_TIMEOUT = 660  # seconds — keep ~60s above COMMAND_TIMEOUT
-    ```
-
-    **Note:** Keep `DEFAULT_REQUEST_TIMEOUT` a bit higher than `COMMAND_TIMEOUT`, so the HTTP connection does not drop before the server has a chance to return the command's output.
-
-4. Build and run the Kali Docker image. Note that I am adding an extra option to manually adjust the MCP timeout in the *MCP-Kali-Server/server.py* so we can adjust that via env variable when running the container.
-   
-    ```
-    RUN sed -i 's|^COMMAND_TIMEOUT = 180.*|COMMAND_TIMEOUT = int(os.environ.get("COMMAND_TIMEOUT", 600))|' server.py
-    ENV COMMAND_TIMEOUT=600
-    ```
-
-    `docker build --tag 'kali-mcp' .`
-   
-    `docker run --cap-add NET_RAW --cap-add NET_ADMIN --rm -d --name kali-mcp -e COMMAND_TIMEOUT=300 -p 5000:5000 kali-mcp`
-   
-    Alternatively, you can pull it from my [Docker Hub](https://hub.docker.com/repository/docker/hiperesfera/kali-mcp/)
-   
-    `docker pull hiperesfera/kali-mcp`
-   
-
-5. Pull, configure and run the Ollama Docker image 
-
-    `docker pull ollama/ollama`
-   
-    `docker run --rm -d --name ollama -p 11434:11434 ollama/ollama`
-
-
-    Download the models into Ollama.
-
-    `docker exec -it ollama ollama pull qwen3.5:cloud`
-   
-    `docker exec -it ollama ollama pull deepseek-v4-pro:cloud`
-   
-    `docker exec -it ollama ollama pull kimi-k2.6:cloud`
-
-    `docker exec -it ollama ollama signin`
-
-
-    Quick test using the [`opencode.json`](https://github.com/hiperesfera/Michos/blob/main/opencode.json) configuration example to load Ollama models
-
-    `OPENCODE_CONFIG=.opencode.json opencode -m ollama/deepseek-v4-pro:cloud run "Which model are you running ?"`
-
-    Response:
-   
-    > build · deepseek-v4-pro:cloud
-    >
-    > I'm running on deepseek-v4-pro:cloud (model ID: ollama/deepseek-v4-pro:cloud).
-
 ## Test Examples and LLM models benchmark
 
 A curated list of vulnerable web applications is available in the [OWASP Vulnerable Web Applications Directory](https://vwad.owasp.org/). While many of these web apps can run in Docker on my local machine, I decided to use online  web apps for simplicity and real-world experience (external app, network latency, ISP blocks, etc.). There is a big caveat here: most of these web apps are likely part of the training for these models; in other words, the findings are things the model already knows or remembers. LLMs are trained on vast amounts of internet data, which includes CVE databases, exploit write-ups, GitHub repositories, and bug bounty reports. If an application or its underlying middleware has been publicly available and discussed before the model's knowledge cutoff date, the model already "knows" about it. In other words, when you point the agent at the target, it doesn't start with a blank slate. Its neural network strongly associates the target's software fingerprint with specific known vulnerabilities.
@@ -168,22 +129,20 @@ These techniques constrain the *final report* to on-disk evidence, but they do n
 
 ## Running Scans
 
-Before each run, restart the Kali container to ensure a clean state and update tool databases:
+List the models the agent can use (the `-m` values below come from this list):
 
 ```bash
-docker stop kali-mcp
-docker run --cap-add NET_RAW --cap-add NET_ADMIN --rm -d --name kali-mcp -e COMMAND_TIMEOUT=300 -p 5000:5000 kali-mcp
-docker exec kali-mcp wpscan --update
+docker exec opencode opencode models
 ```
 
-Run the pentest skill against a target using Ollama cloud models. The `OPENCODE_CONFIG` variable loads the Ollama provider configuration:
+Run the pentest skill against a target using Ollama cloud models — exec into the running `opencode` container and pick a model:
 
 ```bash
-OPENCODE_CONFIG=.opencode.json opencode -m ollama/kimi-k2.6:cloud run "Target URL: http://zero.webappsecurity.com, Mode:pentest" --file skills/web-app-pentester.md
+docker exec opencode opencode -m ollama/kimi-k2.6:cloud run "Target URL: http://zero.webappsecurity.com, Mode:pentest" --file /app/skills/web-app-pentester.md
 
-OPENCODE_CONFIG=.opencode.json opencode -m ollama/qwen3.5:cloud run "Target URL: http://zero.webappsecurity.com, Mode:pentest" --file skills/web-app-pentester.md
+docker exec opencode opencode -m ollama/qwen3.5:cloud run "Target URL: http://zero.webappsecurity.com, Mode:pentest" --file /app/skills/web-app-pentester.md
 
-OPENCODE_CONFIG=.opencode.json opencode -m ollama/deepseek-v4-pro:cloud run "Target URL: http://zero.webappsecurity.com, Mode:pentest" --file skills/web-app-pentester.md
+docker exec opencode opencode -m ollama/deepseek-v4-pro:cloud run "Target URL: http://zero.webappsecurity.com, Mode:pentest" --file /app/skills/web-app-pentester.md
 ```
 
 For comparison against a proprietary model (requires Anthropic API key):

@@ -190,6 +190,9 @@ RUN for bin in /usr/bin/nmap /usr/bin/masscan /usr/bin/naabu; do \
 
 # Post-install data setup
 RUN if [ -f /usr/share/wordlists/rockyou.txt.gz ] && [ ! -f /usr/share/wordlists/rockyou.txt ]; then gunzip -k /usr/share/wordlists/rockyou.txt.gz; fi
+# Kali ships addressable 2.9.0, but wpscan's opt_parse_validator needs >=2.5,<2.9.
+# Install a compatible version so wpscan can run.
+RUN gem install addressable -v 2.8.7
 RUN wpscan --update --no-banner --disable-tls-checks 2>&1 | tail -5 || true
 
 ENV PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/opt/go/bin

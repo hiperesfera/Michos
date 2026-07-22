@@ -1,26 +1,33 @@
 #! /bin/bash
 
-. bin/activate
+# up --build doesn't pull image-only services, so pull ollama first
+docker compose pull ollama
 
-# Build and run the Kali Docker container with all relevant tools, including the MCP server
-
-docker build -t kali-mcp .
-docker run --cap-add NET_RAW --cap-add NET_ADMIN --rm -d --name kali-mcp -e COMMAND_TIMEOUT=300 -p 5000:5000 kali-mcp
+# Build and start all containers (opencode stays idle for exec)
+docker compose up -d --build
 
 # Update wpscan
-docker exec kali-mcp wpscan --update
+docker compose exec kali-server wpscan --update
 
-# Pull and run the Ollama container
-docker run --rm -d --name ollama -p 11434:11434 ollama/ollama
+# Sign in to Ollama (interactive; required before pulling :cloud models)
+docker compose exec ollama ollama signin
 
-# Download models and signin
-docker exec -it ollama ollama pull deepseek-v4-pro:cloud
-docker exec -it ollama ollama pull kimi-k2.6:cloud
-docker exec -it ollama ollama pull qwen3.5:cloud
+# Download models
+docker compose exec ollama ollama pull deepseek-v4-pro:cloud
+docker compose exec ollama ollama pull kimi-k2.6:cloud
+docker compose exec ollama ollama pull qwen3.5:cloud
+docker compose exec ollama ollama pull nemotron-3-ultra:cloud
+docker compose exec ollama ollama pull glm-5.2:cloud
 
-# Sign to Ollama
-docker exec -it ollama ollama signin
+# Print an example scan command
+cat <<'EOF'
 
-# Run the scan
+Init complete. Run a scan by exec-ing into the opencode container, e.g.:
 
-OPENCODE_CONFIG=.opencode.json opencode -m ollama/kimi-k2.6:cloud run "Target URL: http://zero.webappsecurity.com, Mode:pentest" --file skills/web-app-pentester.md
+  docker exec opencode opencode \
+    -m ollama/deepseek-v4-pro:cloud \
+    run "Target URL: http://zero.webappsecurity.com, Mode:pentest" \
+    --file /app/skills/web-app-pentester.md
+
+Report lands in ./results. When finished, tear down with: docker compose down
+EOF
