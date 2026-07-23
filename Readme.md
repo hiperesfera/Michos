@@ -56,10 +56,10 @@ A Docker-based setup that exposes Kali Linux penetration testing tools through a
 
 This project combines:
 
-- **Kali Linux Docker Container**: Running essential penetration testing tools [Kali Docker image](https://hub.docker.com/repository/docker/hiperesfera/kali-mcp/) — see [full tool inventory](#appendix--kali-container-tool-inventory)
+- **Kali Linux Docker Container**: Running essential penetration testing tools [Kali Docker image](https://hub.docker.com/repository/docker/hiperesfera/kali-mcp/); see [full tool inventory](#appendix-kali-container-tool-inventory)
 - **MCP Kali Server**: Exposing Kali tools via MCP ([Wh0am123/MCP-Kali-Server](https://github.com/Wh0am123/MCP-Kali-Server)). The [Kali Docker image](https://hub.docker.com/repository/docker/hiperesfera/kali-mcp/) ships ~65 penetration testing tools focused on web application security assessments. Every tool is accessible to the AI agent in one of two ways:
-  - **Dedicated MCP functions** — ten of the most common tools have their own typed MCP tool with structured parameters: `nmap_scan`, `gobuster_scan`, `dirb_scan`, `nikto_scan`, `sqlmap_scan`, `metasploit_run`, `hydra_attack`, `john_crack`, `wpscan_analyze`, `enum4linux_scan`
-  - **`execute_command`** — a generic MCP function that runs any arbitrary shell command inside the container, giving the agent access to every other tool in the image
+  - **Dedicated MCP functions**: ten of the most common tools have their own typed MCP tool with structured parameters: `nmap_scan`, `gobuster_scan`, `dirb_scan`, `nikto_scan`, `sqlmap_scan`, `metasploit_run`, `hydra_attack`, `john_crack`, `wpscan_analyze`, `enum4linux_scan`
+  - **`execute_command`**: a generic MCP function that runs any arbitrary shell command inside the container, giving the agent access to every other tool in the image
 - **OpenCode Agent**: An AI agent that can execute security tools and automate tasks based on the [`web-app-pentester.md`](https://github.com/hiperesfera/Michos/blob/main/skills/web-app-pentester.md) skill
 - **Ollama**: Running open models locally or in the cloud, providing the LLM backend for the OpenCode agent
 
@@ -68,8 +68,11 @@ flowchart TD
     User(["👤 User"]) --> Agent
 
     subgraph Local["Local Machine"]
-        Agent["OpenCode Agent"]
-        MCP["client.py\nMCP Server"]
+
+        subgraph OpencodeC["Docker: opencode"]
+            Agent["OpenCode Agent"]
+            MCP["client.py\nMCP Server"]
+        end
 
         subgraph OllamaC["Docker: ollama"]
             Ollama["Ollama"]
@@ -93,6 +96,7 @@ flowchart TD
     Ollama -->|"API"| CloudM
     Tools --> Target(["Target\nWeb App"])
 
+    style OpencodeC fill:#d0e8f1,stroke:#2496ed,stroke-width:2px
     style OllamaC fill:#d0e8f1,stroke:#2496ed,stroke-width:2px
     style KaliC fill:#d0e8f1,stroke:#2496ed,stroke-width:2px
     style Target fill:#f1948a,stroke:#e74c3c,color:#000
@@ -166,7 +170,7 @@ opencode -m anthropic/claude-opus-4-7 run "Target URL: http://zero.webappsecurit
 
 More detailed results per web application can be found  under the [results](https://github.com/hiperesfera/Michos/results) folder
 
-## Appendix — Kali Container Tool Inventory
+## Appendix: Kali Container Tool Inventory
 
 ### Scanning, Fingerprinting & OSINT
 | Tool | Purpose |
@@ -251,7 +255,7 @@ More detailed results per web application can be found  under the [results](http
 | `medusa` | Parallel network logon auditor |
 | `patator` | Multi-purpose brute-forcer |
 | `ncrack` | Network authentication cracker |
-| `john` | John the Ripper — password cracker |
+| `john` | John the Ripper password cracker |
 | `hashcat` | GPU hash cracker |
 
 ### Exploitation Frameworks & Enumeration
