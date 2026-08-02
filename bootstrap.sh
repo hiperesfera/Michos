@@ -17,6 +17,7 @@ docker compose exec ollama ollama pull kimi-k2.6:cloud
 docker compose exec ollama ollama pull qwen3.5:cloud
 docker compose exec ollama ollama pull nemotron-3-ultra:cloud
 docker compose exec ollama ollama pull glm-5.2:cloud
+docker compose exec ollama ollama pull kimi-k3:cloud
 
 # Print example scan + list-models commands
 echo ""

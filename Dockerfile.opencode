@@ -4,9 +4,11 @@ FROM ghcr.io/anomalyco/opencode:latest
 # Python for the MCP Kali client + git to fetch it (Alpine has none of these)
 RUN apk add --no-cache python3 py3-pip git
 
-# MCP Kali client: provides client.py referenced by opencode's mcp config
+# MCP Kali client: provides client.py referenced by opencode's mcp config.
+# client.py uses `from mcp.server.fastmcp import FastMCP`, removed in mcp 2.x, so pin to 1.x.
 RUN git clone --depth 1 https://github.com/Wh0am123/MCP-Kali-Server.git /opt/MCP-Kali-Server && \
-    pip3 install --no-cache-dir --break-system-packages -r /opt/MCP-Kali-Server/requirements.txt
+    pip3 install --no-cache-dir --break-system-packages -r /opt/MCP-Kali-Server/requirements.txt && \
+    pip3 install --no-cache-dir --break-system-packages "mcp<2.0"
 
 WORKDIR /app
 COPY opencode.docker.json ./opencode.docker.json

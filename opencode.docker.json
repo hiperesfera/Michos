@@ -19,6 +19,9 @@
           "deepseek-v4-pro:cloud": {
           "name": "deepseek-v4-pro:cloud"
         },
+          "kimi-k3:cloud": {
+          "name": "kimi-k3:cloud"
+        },
           "kimi-k2.6:cloud": {
           "name": "kimi-k2.6:cloud"
         },
