@@ -1,10 +1,9 @@
 #! /bin/bash
 
-# up --build doesn't pull image-only services, so pull ollama first
-docker compose pull ollama
-
-# Build and start all containers (opencode stays idle for exec)
-docker compose up -d --build
+# Start all containers (opencode stays idle for exec).
+# Missing images are built (kali/opencode) or pulled (ollama); existing images are reused as-is.
+# After editing a Dockerfile, rebuild explicitly: docker compose up -d --build
+docker compose up -d
 
 # Update wpscan
 docker compose exec kali-server wpscan --update
