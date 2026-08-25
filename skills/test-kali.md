@@ -8,7 +8,7 @@ This skill performs **diagnostic checks only**. It does not exploit, scan, or at
 
 ## How to use
 
-Run the steps in order. Record the result of each step in the report template at the bottom. Stop only if step 1 fails — otherwise continue through every step so the final report shows the full picture.
+Run the steps in order. Record the result of each step in the report template at the bottom. Stop only if step 1 fails; otherwise continue through every step so the final report shows the full picture.
 
 ## 1. Server health
 
@@ -214,4 +214,4 @@ The raw output of steps 4 and 5 in code blocks, plus a brief verdict.
 This skill does not:
 
 * Exploit, scan, or attack any third-party target beyond the safe diagnostic invocations against `scanme.nmap.org` and `wordpress.org`.
-* Verify tool *correctness* — only *presence and reachability*.
+* Verify tool *correctness*, only *presence and reachability*.

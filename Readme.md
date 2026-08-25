@@ -31,16 +31,18 @@ The whole stack (Kali tools + MCP server, Ollama, and the OpenCode agent) runs i
 
     The `ollama signin` step is interactive (an ollama.com login), so run this from a terminal.
 
-3. Run a scan by exec-ing into the idle `opencode` container. Pick a model and target:
+3. Run a scan from the web UI at **http://localhost:8080**: enter the target URL, mode, and model, then watch progress and read the report in the browser.
+
+    Or run it from the CLI by exec-ing into the `webui` container. Pick a model and target:
 
     ```bash
-    docker exec opencode opencode \
+    docker exec webui opencode \
       -m ollama/deepseek-v4-pro:cloud \
       run "Target URL: http://zero.webappsecurity.com, Mode:pentest" \
       --file /app/skills/web-app-pentester.md
     ```
 
-    The report lands in `./results`. You can list available models and their exact naming with `docker exec opencode opencode models`.
+    The report lands in `./results`. You can list available models and their exact naming with `docker exec webui opencode models`.
 
 4. Tear down when finished:
 
@@ -65,13 +67,15 @@ This project combines:
 
 ```mermaid
 flowchart TD
-    User(["👤 User"]) --> Agent
+    User(["👤 User"]) -->|"browser :8080"| WebUI
 
     subgraph Local["Local Machine"]
 
-        subgraph OpencodeC["Docker: opencode"]
+        subgraph OpencodeC["Docker: webui"]
+            WebUI["Web UI :8080"]
             Agent["OpenCode Agent"]
             MCP["client.py\nMCP Server"]
+            WebUI --> Agent
         end
 
         subgraph OllamaC["Docker: ollama"]
@@ -135,20 +139,24 @@ These techniques constrain the *final report* to on-disk evidence, but they do n
 
 ## Running Scans
 
+The simplest way is the web UI at **http://localhost:8080**: enter the target URL, mode, and model, then watch the live progress and read the report in the browser. Reports also land in `./results`.
+
+To run scans from the CLI instead, exec into the `webui` container.
+
 List the models the agent can use (the `-m` values below come from this list):
 
 ```bash
-docker exec opencode opencode models
+docker exec webui opencode models
 ```
 
-Run the pentest skill against a target using Ollama cloud models. Exec into the running `opencode` container and pick a model:
+Run the pentest skill against a target using Ollama cloud models. Pick a model:
 
 ```bash
-docker exec opencode opencode -m ollama/kimi-k2.6:cloud run "Target URL: http://zero.webappsecurity.com, Mode:pentest" --file /app/skills/web-app-pentester.md
+docker exec webui opencode -m ollama/kimi-k2.6:cloud run "Target URL: http://zero.webappsecurity.com, Mode:pentest" --file /app/skills/web-app-pentester.md
 
-docker exec opencode opencode -m ollama/qwen3.5:cloud run "Target URL: http://zero.webappsecurity.com, Mode:pentest" --file /app/skills/web-app-pentester.md
+docker exec webui opencode -m ollama/qwen3.5:cloud run "Target URL: http://zero.webappsecurity.com, Mode:pentest" --file /app/skills/web-app-pentester.md
 
-docker exec opencode opencode -m ollama/deepseek-v4-pro:cloud run "Target URL: http://zero.webappsecurity.com, Mode:pentest" --file /app/skills/web-app-pentester.md
+docker exec webui opencode -m ollama/deepseek-v4-pro:cloud run "Target URL: http://zero.webappsecurity.com, Mode:pentest" --file /app/skills/web-app-pentester.md
 ```
 
 For comparison against a proprietary model (requires Anthropic API key):
