@@ -5,6 +5,7 @@ Runs inside the opencode-runner image: it shells out to the `opencode` binary th
 already configured (MCP kali-server + ollama) and writes each scan into its own directory
 under /results/webui so the generated report is easy to find. Stdlib only, single process."""
 
+import base64
 import html
 import json
 import os
@@ -18,8 +19,20 @@ from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 
 CONFIG_PATH = os.environ.get("OPENCODE_CONFIG", "/app/opencode.docker.json")
 SKILL_FILE = "/app/skills/web-app-pentester.md"
+LOGO_PATH = os.environ.get("LOGO_PATH", "/app/img/michos.png")
+OLLAMA_LOGIN_URL = os.environ.get("OLLAMA_LOGIN_URL", "").strip()
+OLLAMA_LOGGED_IN = os.environ.get("OLLAMA_LOGGED_IN", "").strip().lower() in ("1", "true", "yes")
 RESULTS_BASE = os.environ.get("RESULTS_BASE", "/results/webui")
 MODES = ("passive", "recon", "pentest")
+
+
+def load_logo():
+    """Embed the logo as a data URI so the page stays self-contained (no static route / volume)."""
+    try:
+        with open(LOGO_PATH, "rb") as fh:
+            return "data:image/png;base64," + base64.b64encode(fh.read()).decode()
+    except OSError:
+        return ""
 
 # scan_id -> {status, url, mode, model, outdir, logfile, returncode, started}
 SCANS = {}
@@ -38,6 +51,17 @@ def load_models():
 
 
 MODELS = load_models()
+LOGO_URI = load_logo()
+
+# Ollama sign-in indicator: green "Logged into Ollama" once authenticated, otherwise a
+# "Log in" button when a sign-in link is injected via env, otherwise nothing.
+if OLLAMA_LOGGED_IN:
+    LOGIN_BTN = '<span class="login loggedin">Logged into Ollama</span>'
+elif OLLAMA_LOGIN_URL.startswith(("http://", "https://")):
+    LOGIN_BTN = ('<a class="login" href="%s" target="_blank" rel="noopener">Log in to Ollama</a>'
+                 % html.escape(OLLAMA_LOGIN_URL, quote=True))
+else:
+    LOGIN_BTN = ""
 
 
 def slug(url):
@@ -114,6 +138,11 @@ class Handler(BaseHTTPRequestHandler):
     def do_GET(self):
         if self.path == "/" or self.path.startswith("/?"):
             return self._send(200, PAGE, "text/html; charset=utf-8")
+        if self.path.split("?")[0] == "/api/ollama-status":
+            return self._send(200, json.dumps({
+                "logged_in": OLLAMA_LOGGED_IN,
+                "login_url": OLLAMA_LOGIN_URL if OLLAMA_LOGIN_URL.startswith(("http://", "https://")) else "",
+            }))
         m = re.match(r"^/api/scan/([\w.-]+)/(progress|report)/?$", self.path.split("?")[0])
         if m:
             scan_id, what = m.group(1), m.group(2)
@@ -187,14 +216,19 @@ class Handler(BaseHTTPRequestHandler):
 PAGE = """<!doctype html>
 <html lang="en"><head><meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Pentest Launcher</title>
+<title>Michos</title>
 <style>
   :root { color-scheme: light dark; }
   * { box-sizing: border-box; }
   body { font: 15px/1.5 system-ui, sans-serif; margin: 0; background: #0f1216; color: #e6e6e6; }
-  header { padding: 16px 24px; border-bottom: 1px solid #2a2f37; background: #151a21; }
-  header h1 { margin: 0; font-size: 18px; }
-  header p { margin: 4px 0 0; color: #9aa4b2; font-size: 13px; }
+  header { border-bottom: 1px solid #2a2f37; background: #151a21; }
+  header .hdr { position: relative; max-width: 980px; margin: 0 auto; padding: 24px; }
+  header .brand { background: #fff; border-radius: 12px; padding: 16px; text-align: center; }
+  header .logo { height: 110px; }
+  .login { padding: 9px 16px; background: #3b82f6; color: #fff; border-radius: 7px;
+    font-weight: 600; text-decoration: none; font-size: 14px; }
+  a.login:hover { background: #2f6fd6; }
+  .login.loggedin { background: #14532d; color: #86efac; }
   main { max-width: 980px; margin: 0 auto; padding: 24px; }
   .card { background: #151a21; border: 1px solid #2a2f37; border-radius: 10px; padding: 20px; margin-bottom: 20px; }
   label { display: block; margin: 12px 0 4px; font-size: 13px; color: #9aa4b2; }
@@ -205,6 +239,8 @@ PAGE = """<!doctype html>
   button { margin-top: 18px; padding: 10px 20px; background: #3b82f6; color: #fff; border: 0;
     border-radius: 7px; font: inherit; font-weight: 600; cursor: pointer; }
   button:disabled { opacity: .5; cursor: default; }
+  .actions { display: flex; justify-content: space-between; align-items: center; margin-top: 18px; }
+  .actions button { margin-top: 0; }
   .badge { display: inline-block; padding: 3px 10px; border-radius: 20px; font-size: 12px; font-weight: 600; }
   .running { background: #78500a; color: #fde68a; }
   .done { background: #14532d; color: #86efac; }
@@ -243,8 +279,11 @@ PAGE = """<!doctype html>
   .panel.active { display: block; }
 </style></head>
 <body>
-<header><h1>Web App Pentest Launcher</h1>
-<p>Runs the <code>web-app-pentester</code> skill via opencode against the Kali MCP server.</p></header>
+<header>
+  <div class="hdr">
+    <div class="brand"><img src="%LOGO%" alt="Michos" class="logo"></div>
+  </div>
+</header>
 <main>
   <div class="tabs">
     <button class="tab active" id="tabBtnScan" onclick="showTab('scan')">Scan</button>
@@ -268,7 +307,10 @@ PAGE = """<!doctype html>
     <input id="auth" placeholder="Authorization: Bearer eyJ...  or  Cookie: session=...">
     <label>Secondary Auth Header (optional, for access-control testing)</label>
     <input id="auth2" placeholder="second, lower-privilege identity">
-    <button id="start">Start scan</button>
+    <div class="actions">
+      <div id="loginSlot">%LOGIN%</div>
+      <button id="start">Start scan</button>
+    </div>
     <p id="err" style="color:#fca5a5"></p>
   </div>
 
@@ -434,11 +476,38 @@ function md2html(src) {
   return out.join("\\n");
 }
 
+// Poll Ollama sign-in status so the button flips to green live (e.g. after bootstrap
+// recreates the container as logged in) without needing a page refresh.
+function renderLogin(s) {
+  const slot = $("loginSlot");
+  slot.innerHTML = "";
+  let el;
+  if (s.logged_in) {
+    el = document.createElement("span");
+    el.className = "login loggedin";
+    el.textContent = "Logged into Ollama";
+  } else if (s.login_url) {
+    el = document.createElement("a");
+    el.className = "login";
+    el.href = s.login_url;
+    el.target = "_blank";
+    el.rel = "noopener";
+    el.textContent = "Log in to Ollama";
+  } else {
+    return;
+  }
+  slot.appendChild(el);
+}
+async function pollLogin() {
+  try { renderLogin(await (await fetch("/api/ollama-status")).json()); } catch (e) {}
+}
+setInterval(pollLogin, 5000);
+
 restore();
 </script>
 </body></html>"""
 
-PAGE = PAGE.replace("%MODELS%", json.dumps(MODELS))
+PAGE = PAGE.replace("%MODELS%", json.dumps(MODELS)).replace("%LOGO%", LOGO_URI).replace("%LOGIN%", LOGIN_BTN)
 
 
 if __name__ == "__main__":

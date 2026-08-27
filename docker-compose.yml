@@ -32,9 +32,13 @@ services:
       - ollama
     volumes:
       - ./results:/results
-      - ./webui:/webui
     working_dir: /results
-    entrypoint: ["python3", "/webui/server.py"]
+    environment:
+      # Ollama sign-in link (from `ollama signin`); shown as a "Log in" button when set.
+      - OLLAMA_LOGIN_URL=${OLLAMA_LOGIN_URL:-}
+      # Set truthy once signed in; shows a green "Logged into Ollama" status instead.
+      - OLLAMA_LOGGED_IN=${OLLAMA_LOGGED_IN:-}
+    entrypoint: ["python3", "/app/webui/server.py"]
     ports:
       - "8080:8080"
     restart: unless-stopped

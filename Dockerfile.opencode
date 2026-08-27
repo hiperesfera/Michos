@@ -13,6 +13,8 @@ RUN git clone --depth 1 https://github.com/Wh0am123/MCP-Kali-Server.git /opt/MCP
 WORKDIR /app
 COPY opencode.docker.json ./opencode.docker.json
 COPY skills/ ./skills/
+COPY webui/ ./webui/
+COPY img/ ./img/
 
 ENV OPENCODE_CONFIG=/app/opencode.docker.json
 
