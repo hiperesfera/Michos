@@ -10,9 +10,12 @@ import html
 import json
 import os
 import re
+import signal
 import subprocess
 import threading
 import time
+import urllib.error
+import urllib.request
 import uuid
 from datetime import datetime, timezone
 from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
@@ -21,9 +24,11 @@ CONFIG_PATH = os.environ.get("OPENCODE_CONFIG", "/app/opencode.docker.json")
 SKILL_FILE = "/app/skills/web-app-pentester.md"
 LOGO_PATH = os.environ.get("LOGO_PATH", "/app/img/michos.png")
 OLLAMA_LOGIN_URL = os.environ.get("OLLAMA_LOGIN_URL", "").strip()
-OLLAMA_LOGGED_IN = os.environ.get("OLLAMA_LOGGED_IN", "").strip().lower() in ("1", "true", "yes")
+OLLAMA_HOST = os.environ.get("OLLAMA_HOST", "http://ollama:11434")
+KALI_SERVER = os.environ.get("KALI_SERVER", "http://kali-server:5000")
 RESULTS_BASE = os.environ.get("RESULTS_BASE", "/results/webui")
 MODES = ("passive", "recon", "pentest")
+TIMINGS = ("paranoid", "polite", "normal", "aggressive")
 
 
 def load_logo():
@@ -53,15 +58,41 @@ def load_models():
 MODELS = load_models()
 LOGO_URI = load_logo()
 
-# Ollama sign-in indicator: green "Logged into Ollama" once authenticated, otherwise a
-# "Log in" button when a sign-in link is injected via env, otherwise nothing.
-if OLLAMA_LOGGED_IN:
-    LOGIN_BTN = '<span class="login loggedin">Logged into Ollama</span>'
-elif OLLAMA_LOGIN_URL.startswith(("http://", "https://")):
+# A :cloud model to probe Ollama's real auth state (see is_logged_in).
+PROBE_MODEL = next((m[len("ollama/"):] for m in MODELS if m.endswith(":cloud")), "")
+
+# Initial "Log in" button (rendered server-side). The logged-in/green state is decided
+# live by the client polling /api/ollama-status, so it isn't baked into the page here.
+if OLLAMA_LOGIN_URL.startswith(("http://", "https://")):
     LOGIN_BTN = ('<a class="login" href="%s" target="_blank" rel="noopener">Log in to Ollama</a>'
                  % html.escape(OLLAMA_LOGIN_URL, quote=True))
 else:
     LOGIN_BTN = ""
+
+# Cached result of the live auth probe. `ollama signin` exits 0 even when signed out, so we
+# detect real login by calling /api/generate on a cloud model: 401 => signed out, 2xx => in.
+_AUTH = {"logged_in": False, "ts": 0.0}
+_AUTH_TTL = 15  # seconds between probes while still signed out
+
+
+def is_logged_in():
+    if _AUTH["logged_in"]:
+        return True  # sticky once true, to avoid repeated cloud calls
+    if not PROBE_MODEL or time.time() - _AUTH["ts"] < _AUTH_TTL:
+        return False
+    _AUTH["ts"] = time.time()
+    body = json.dumps({"model": PROBE_MODEL, "prompt": "1", "stream": False,
+                       "options": {"num_predict": 1}, "keep_alive": 0}).encode()
+    req = urllib.request.Request(OLLAMA_HOST + "/api/generate", data=body,
+                                 headers={"Content-Type": "application/json"}, method="POST")
+    try:
+        urllib.request.urlopen(req, timeout=30).read()
+        _AUTH["logged_in"] = True
+    except urllib.error.HTTPError as e:
+        _AUTH["logged_in"] = e.code != 401
+    except Exception:
+        _AUTH["logged_in"] = False
+    return _AUTH["logged_in"]
 
 
 def slug(url):
@@ -69,8 +100,8 @@ def slug(url):
     return re.sub(r"[^A-Za-z0-9.-]", "_", host) or "target"
 
 
-def build_message(url, mode, auth, auth2, maxtime):
-    lines = [f"Target URL: {url}", f"Mode: {mode}"]
+def build_message(url, mode, timing, auth, auth2, maxtime):
+    lines = [f"Target URL: {url}", f"Mode: {mode}", f"Timing: {timing}"]
     if auth:
         lines.append(f"Auth Header: {auth}")
     if auth2:
@@ -84,16 +115,64 @@ def run_scan(scan_id, model, message, outdir):
     with open(logpath, "w") as log:
         log.write(f"$ opencode -m {model} run <message> --file {SKILL_FILE}\n\n{message}\n\n{'='*60}\n\n")
         log.flush()
+        # start_new_session=True puts opencode in its own process group so cancel can kill
+        # the whole session (agent + any children) with one signal.
         proc = subprocess.Popen(
             ["opencode", "-m", model, "run", message, "--file", SKILL_FILE],
             cwd=outdir, stdout=log, stderr=subprocess.STDOUT,
+            start_new_session=True,
         )
     with LOCK:
+        SCANS[scan_id]["proc"] = proc
         SCANS[scan_id]["pid"] = proc.pid
     rc = proc.wait()
     with LOCK:
         SCANS[scan_id]["returncode"] = rc
-        SCANS[scan_id]["status"] = "done" if rc == 0 else "failed"
+        if SCANS[scan_id]["status"] != "cancelled":  # cancel_scan may have set this
+            SCANS[scan_id]["status"] = "done" if rc == 0 else "failed"
+
+
+# Upstream kali-server has no stop endpoint and ignores client disconnects, so a tool it is
+# already running keeps going until COMMAND_TIMEOUT. server.py runs as PID 1 there with each
+# tool as its child, so we kill every process except PID 1 and the killer shell itself.
+KALI_KILL_CMD = (
+    'me=$$; par=$PPID; '
+    'for p in $(ls /proc 2>/dev/null | grep -E "^[0-9]+$"); do '
+    '[ "$p" = 1 ] && continue; [ "$p" = "$me" ] && continue; [ "$p" = "$par" ] && continue; '
+    'grep -qa server.py "/proc/$p/cmdline" 2>/dev/null && continue; '
+    'kill -9 "$p" 2>/dev/null; done'
+)
+
+
+def kill_kali_tools():
+    """Kill any in-flight tool command in the kali-server container via its /api/command route."""
+    body = json.dumps({"command": KALI_KILL_CMD}).encode()
+    req = urllib.request.Request(KALI_SERVER + "/api/command", data=body,
+                                 headers={"Content-Type": "application/json"}, method="POST")
+    try:
+        urllib.request.urlopen(req, timeout=15).read()
+    except Exception:
+        pass
+
+
+def cancel_scan(scan):
+    """Stop the scan: kill the opencode session, and any in-flight command in the Kali container."""
+    with LOCK:
+        scan["status"] = "cancelled"  # set first so run_scan won't overwrite with done/failed
+    proc = scan.get("proc")
+    if proc and proc.poll() is None:
+        try:
+            pgid = os.getpgid(proc.pid)
+            os.killpg(pgid, signal.SIGTERM)
+            for _ in range(20):  # up to ~2s grace, then force
+                if proc.poll() is not None:
+                    break
+                time.sleep(0.1)
+            else:
+                os.killpg(pgid, signal.SIGKILL)
+        except (ProcessLookupError, PermissionError):
+            pass
+    kill_kali_tools()
 
 
 def find_report(outdir):
@@ -140,7 +219,7 @@ class Handler(BaseHTTPRequestHandler):
             return self._send(200, PAGE, "text/html; charset=utf-8")
         if self.path.split("?")[0] == "/api/ollama-status":
             return self._send(200, json.dumps({
-                "logged_in": OLLAMA_LOGGED_IN,
+                "logged_in": is_logged_in(),
                 "login_url": OLLAMA_LOGIN_URL if OLLAMA_LOGIN_URL.startswith(("http://", "https://")) else "",
             }))
         m = re.match(r"^/api/scan/([\w.-]+)/(progress|report)/?$", self.path.split("?")[0])
@@ -174,6 +253,15 @@ class Handler(BaseHTTPRequestHandler):
         return self._send(404, json.dumps({"error": "not found"}))
 
     def do_POST(self):
+        cm = re.match(r"^/api/scan/([\w.-]+)/cancel/?$", self.path.split("?")[0])
+        if cm:
+            with LOCK:
+                scan = SCANS.get(cm.group(1))
+            if not scan:
+                return self._send(404, json.dumps({"error": "unknown scan"}))
+            if scan["status"] == "running":
+                cancel_scan(scan)
+            return self._send(200, json.dumps({"status": scan["status"]}))
         if self.path != "/api/scan":
             return self._send(404, json.dumps({"error": "not found"}))
         length = int(self.headers.get("Content-Length", 0))
@@ -184,6 +272,7 @@ class Handler(BaseHTTPRequestHandler):
 
         url = (data.get("url") or "").strip()
         mode = (data.get("mode") or "").strip()
+        timing = (data.get("timing") or "normal").strip()
         model = (data.get("model") or "").strip()
         auth = (data.get("auth") or "").strip()
         auth2 = (data.get("auth2") or "").strip()
@@ -193,6 +282,8 @@ class Handler(BaseHTTPRequestHandler):
             return self._send(400, json.dumps({"error": "Target URL must start with http:// or https://"}))
         if mode not in MODES:
             return self._send(400, json.dumps({"error": "invalid mode"}))
+        if timing not in TIMINGS:
+            return self._send(400, json.dumps({"error": "invalid timing"}))
         if model not in MODELS:
             return self._send(400, json.dumps({"error": "invalid model"}))
         if not maxtime.isdigit():
@@ -201,7 +292,7 @@ class Handler(BaseHTTPRequestHandler):
         scan_id = datetime.now(timezone.utc).strftime("%Y%m%d-%H%M%S") + "-" + slug(url) + "-" + uuid.uuid4().hex[:6]
         outdir = os.path.join(RESULTS_BASE, scan_id)
         os.makedirs(outdir, exist_ok=True)
-        message = build_message(url, mode, auth, auth2, maxtime)
+        message = build_message(url, mode, timing, auth, auth2, maxtime)
 
         with LOCK:
             SCANS[scan_id] = {
@@ -240,11 +331,15 @@ PAGE = """<!doctype html>
     border-radius: 7px; font: inherit; font-weight: 600; cursor: pointer; }
   button:disabled { opacity: .5; cursor: default; }
   .actions { display: flex; justify-content: space-between; align-items: center; margin-top: 18px; }
+  .action-btns { display: flex; gap: 10px; align-items: center; }
   .actions button { margin-top: 0; }
+  #cancel { background: #dc2626; }
+  #cancel:hover:not(:disabled) { background: #b91c1c; }
   .badge { display: inline-block; padding: 3px 10px; border-radius: 20px; font-size: 12px; font-weight: 600; }
   .running { background: #78500a; color: #fde68a; }
   .done { background: #14532d; color: #86efac; }
   .failed { background: #7f1d1d; color: #fecaca; }
+  .cancelled { background: #374151; color: #d1d5db; }
   pre { background: #0b0e12; border: 1px solid #2a2f37; border-radius: 7px; padding: 14px;
     overflow: auto; max-height: 420px; font: 12.5px/1.5 ui-monospace, monospace; white-space: pre-wrap;
     word-break: break-word; }
@@ -298,6 +393,12 @@ PAGE = """<!doctype html>
         <option value="recon">recon</option>
         <option value="pentest" selected>pentest</option>
       </select></div>
+      <div><label>Timing</label><select id="timing" title="Like nmap -T: how fast to scan. Lower it if the target throws 429s.">
+        <option value="paranoid">paranoid</option>
+        <option value="polite">polite</option>
+        <option value="normal" selected>normal</option>
+        <option value="aggressive">aggressive</option>
+      </select></div>
     </div>
     <div class="row">
       <div><label>Model</label><select id="model"></select></div>
@@ -309,7 +410,10 @@ PAGE = """<!doctype html>
     <input id="auth2" placeholder="second, lower-privilege identity">
     <div class="actions">
       <div id="loginSlot">%LOGIN%</div>
-      <button id="start">Start scan</button>
+      <div class="action-btns">
+        <button id="cancel" class="hidden">Cancel scan</button>
+        <button id="start">Start scan</button>
+      </div>
     </div>
     <p id="err" style="color:#fca5a5"></p>
   </div>
@@ -337,6 +441,20 @@ $("model").innerHTML = models.map(m => `<option value="${m}">${m}</option>`).joi
   || '<option value="">(no models found)</option>';
 
 let poll = null;
+let currentScanId = null;
+
+function setRunning(running) {
+  $("start").disabled = running;
+  $("cancel").classList.toggle("hidden", !running);
+  $("cancel").disabled = false;
+}
+
+$("cancel").onclick = async () => {
+  if (!currentScanId) return;
+  $("cancel").disabled = true;
+  try { await fetch(`/api/scan/${currentScanId}/cancel`, {method: "POST"}); } catch (e) {}
+  // the next tick reflects the "cancelled" status and stops polling
+};
 
 function showTab(name) {
   if ($("tabBtnReport").disabled && name === "report") return;
@@ -349,17 +467,19 @@ function showTab(name) {
 $("start").onclick = async () => {
   $("err").textContent = "";
   const body = {
-    url: $("url").value, mode: $("mode").value, model: $("model").value,
+    url: $("url").value, mode: $("mode").value, timing: $("timing").value, model: $("model").value,
     maxtime: $("maxtime").value, auth: $("auth").value, auth2: $("auth2").value,
   };
   $("start").disabled = true;
   const r = await fetch("/api/scan", {method: "POST", body: JSON.stringify(body)});
   const j = await r.json();
-  if (!r.ok) { $("err").textContent = j.error || "failed to start"; $("start").disabled = false; return; }
+  if (!r.ok) { $("err").textContent = j.error || "failed to start"; setRunning(false); return; }
   startWatching(j.scan_id);
 };
 
 function startWatching(id) {
+  currentScanId = id;
+  setRunning(true);
   $("progCard").classList.remove("hidden");
   $("tabBtnReport").disabled = true;
   showTab("scan");
@@ -385,7 +505,8 @@ async function restore() {
   $("log").textContent = j.log || "(waiting for output...)";
   $("log").scrollTop = $("log").scrollHeight;
   if (j.status === "running") {
-    $("start").disabled = true;
+    currentScanId = id;
+    setRunning(true);
     if (poll) clearInterval(poll);
     poll = setInterval(() => tick(id), 2000);
   } else {
@@ -403,7 +524,7 @@ async function tick(id) {
   if (atBottom) $("log").scrollTop = $("log").scrollHeight;
   if (j.status !== "running") {
     clearInterval(poll); poll = null;
-    $("start").disabled = false;
+    setRunning(false);
     loadReport(id);
   }
 }
@@ -501,6 +622,7 @@ function renderLogin(s) {
 async function pollLogin() {
   try { renderLogin(await (await fetch("/api/ollama-status")).json()); } catch (e) {}
 }
+pollLogin();
 setInterval(pollLogin, 5000);
 
 restore();

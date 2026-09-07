@@ -10,7 +10,13 @@
         "baseURL": "http://ollama:11434/v1"
       },
       "models": {
-        "llama3.1:8b": {
+          "qwen2.5:7b": {
+          "name": "qwen2.5:7b"
+        },
+          "hermes3:8b": {
+          "name": "hermes3:8b"
+        },
+          "llama3.1:8b": {
           "name": "llama3.1:8b"
         },
         "qwen3.5:cloud": {
