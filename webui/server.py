@@ -100,13 +100,12 @@ def slug(url):
     return re.sub(r"[^A-Za-z0-9.-]", "_", host) or "target"
 
 
-def build_message(url, mode, timing, auth, auth2, maxtime):
+def build_message(url, mode, timing, auth, auth2):
     lines = [f"Target URL: {url}", f"Mode: {mode}", f"Timing: {timing}"]
     if auth:
         lines.append(f"Auth Header: {auth}")
     if auth2:
         lines.append(f"Auth Header (Secondary): {auth2}")
-    lines.append(f"Max Time: {maxtime}")
     return "\n".join(lines)
 
 
@@ -276,7 +275,6 @@ class Handler(BaseHTTPRequestHandler):
         model = (data.get("model") or "").strip()
         auth = (data.get("auth") or "").strip()
         auth2 = (data.get("auth2") or "").strip()
-        maxtime = str(data.get("maxtime") or "600").strip()
 
         if not re.match(r"^https?://", url):
             return self._send(400, json.dumps({"error": "Target URL must start with http:// or https://"}))
@@ -286,13 +284,11 @@ class Handler(BaseHTTPRequestHandler):
             return self._send(400, json.dumps({"error": "invalid timing"}))
         if model not in MODELS:
             return self._send(400, json.dumps({"error": "invalid model"}))
-        if not maxtime.isdigit():
-            return self._send(400, json.dumps({"error": "Max Time must be an integer"}))
 
         scan_id = datetime.now(timezone.utc).strftime("%Y%m%d-%H%M%S") + "-" + slug(url) + "-" + uuid.uuid4().hex[:6]
         outdir = os.path.join(RESULTS_BASE, scan_id)
         os.makedirs(outdir, exist_ok=True)
-        message = build_message(url, mode, timing, auth, auth2, maxtime)
+        message = build_message(url, mode, timing, auth, auth2)
 
         with LOCK:
             SCANS[scan_id] = {
@@ -402,7 +398,6 @@ PAGE = """<!doctype html>
     </div>
     <div class="row">
       <div><label>Model</label><select id="model"></select></div>
-      <div><label>Max Time (seconds)</label><input id="maxtime" type="number" value="600"></div>
     </div>
     <label>Auth Header (optional)</label>
     <input id="auth" placeholder="Authorization: Bearer eyJ...  or  Cookie: session=...">
@@ -468,7 +463,7 @@ $("start").onclick = async () => {
   $("err").textContent = "";
   const body = {
     url: $("url").value, mode: $("mode").value, timing: $("timing").value, model: $("model").value,
-    maxtime: $("maxtime").value, auth: $("auth").value, auth2: $("auth2").value,
+    auth: $("auth").value, auth2: $("auth2").value,
   };
   $("start").disabled = true;
   const r = await fetch("/api/scan", {method: "POST", body: JSON.stringify(body)});

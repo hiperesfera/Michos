@@ -4,7 +4,7 @@
 
 Verify that the Kali MCP server is reachable and that every tool configured in the provided Dockerfile is actually callable. Produces a single pass/fail table so you can see at a glance what's broken in the container environment before running any real assessments.
 
-This skill performs **diagnostic checks only**. It does not exploit, scan, or attack any third-party target. Every check is either local (`127.0.0.1`, `--version`, `--help`, `which`) or against `scanme.nmap.org`, the public test target maintained by the Nmap project for exactly this purpose.
+This skill performs **diagnostic checks only**. It does not exploit or attack anything. Every check is either local (`127.0.0.1`, `--version`, `--help`, `which`), a single low-impact request against `scanme.nmap.org` (the public test target maintained by the Nmap project for exactly this purpose), or — for `wpscan_analyze` only — one short scan of `wordpress.org`.
 
 ## How to use
 
@@ -38,13 +38,22 @@ Expect: any output containing port 80 state.
 ### 2.2 `gobuster_scan`
 
 ```text
-gobuster_scan(url="[http://scanme.nmap.org](http://scanme.nmap.org)", mode="dir", wordlist="/usr/share/seclists/Discovery/Web-Content/common.txt", additional_args="-t 5 --no-error -q")
+gobuster_scan(url="http://scanme.nmap.org", mode="dir", wordlist="/usr/share/seclists/Discovery/Web-Content/common.txt", additional_args="-t 5 --no-error -q")
 
 ```
 
 Expect: gobuster banner and a small result set.
 
-### 2.3 `nikto_scan`
+### 2.3 `dirb_scan`
+
+```text
+dirb_scan(url="http://scanme.nmap.org/", wordlist="/usr/share/seclists/Discovery/Web-Content/common.txt", additional_args="-S -f")
+
+```
+
+Expect: dirb banner and a small result set.
+
+### 2.4 `nikto_scan`
 
 ```text
 nikto_scan(target="scanme.nmap.org", additional_args="-maxtime 30s -Tuning 1")
@@ -53,16 +62,16 @@ nikto_scan(target="scanme.nmap.org", additional_args="-maxtime 30s -Tuning 1")
 
 Expect: nikto header lines.
 
-### 2.4 `sqlmap_scan`
+### 2.5 `sqlmap_scan`
 
 ```text
-sqlmap_scan(url="[http://scanme.nmap.org/?id=1](http://scanme.nmap.org/?id=1)", data="", additional_args="--batch --flush-session --crawl=0 --threads=1 --timeout=10 --retries=0")
+sqlmap_scan(url="http://scanme.nmap.org/?id=1", data="", additional_args="--batch --flush-session --crawl=0 --threads=1 --timeout=10 --retries=0")
 
 ```
 
 Expect: sqlmap banner and a "no injection found" outcome.
 
-### 2.5 `metasploit_run`
+### 2.6 `metasploit_run`
 
 ```text
 metasploit_run(module="auxiliary/scanner/portscan/tcp", options={"RHOSTS": "127.0.0.1", "PORTS": "22", "THREADS": "1"})
@@ -71,7 +80,7 @@ metasploit_run(module="auxiliary/scanner/portscan/tcp", options={"RHOSTS": "127.
 
 Expect: msfconsole runs the module and exits.
 
-### 2.6 `hydra_attack`
+### 2.7 `hydra_attack`
 
 ```text
 hydra_attack(target="127.0.0.1", service="ssh", username="root", password="this_is_not_a_real_password_diagnostic_only", additional_args="-t 1 -W 1 -f")
@@ -80,7 +89,7 @@ hydra_attack(target="127.0.0.1", service="ssh", username="root", password="this_
 
 Expect: hydra runs and reports a failed attempt.
 
-### 2.7 `john_crack`
+### 2.8 `john_crack`
 
 First create a known-format hash:
 
@@ -98,16 +107,16 @@ john_crack(hash_file="/tmp/diag-hash.txt", wordlist="/usr/share/wordlists/rockyo
 
 Expect: john banner and either a crack result or timeout.
 
-### 2.8 `wpscan_analyze`
+### 2.9 `wpscan_analyze`
 
 ```text
-wpscan_analyze(url="[https://wordpress.org/](https://wordpress.org/)", additional_args="--no-update --random-user-agent --disable-tls-checks --max-scan-duration 30")
+wpscan_analyze(url="https://wordpress.org/", additional_args="--no-update --random-user-agent --disable-tls-checks --max-scan-duration 30")
 
 ```
 
 Expect: wpscan banner.
 
-### 2.9 `enum4linux_scan`
+### 2.10 `enum4linux_scan`
 
 ```text
 enum4linux_scan(target="127.0.0.1", additional_args="-U")
@@ -116,7 +125,7 @@ enum4linux_scan(target="127.0.0.1", additional_args="-U")
 
 Expect: enum4linux banner.
 
-### 2.10 `server_health` (re-check)
+### 2.11 `server_health` (re-check)
 
 ```text
 server_health()
@@ -125,7 +134,7 @@ server_health()
 
 Confirm the server didn't crash during diagnostics.
 
-### 2.11 `execute_command` (basic sanity)
+### 2.12 `execute_command` (basic sanity)
 
 ```text
 execute_command(command="id && uname -a && pwd")
@@ -182,6 +191,7 @@ A table with one row per dedicated function:
 | execute_command    |        |                                      |
 | nmap_scan          |        |                                      |
 | gobuster_scan      |        |                                      |
+| dirb_scan          |        |                                      |
 | nikto_scan         |        |                                      |
 | sqlmap_scan        |        |                                      |
 | metasploit_run     |        |                                      |
@@ -213,5 +223,5 @@ The raw output of steps 4 and 5 in code blocks, plus a brief verdict.
 
 This skill does not:
 
-* Exploit, scan, or attack any third-party target beyond the safe diagnostic invocations against `scanme.nmap.org` and `wordpress.org`.
+* Exploit or attack any third-party target. The only external requests are the single low-impact diagnostic invocations against `scanme.nmap.org` and, for `wpscan_analyze` only, one short scan of `wordpress.org`.
 * Verify tool *correctness*, only *presence and reachability*.

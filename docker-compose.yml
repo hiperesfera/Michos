@@ -9,7 +9,7 @@ services:
       - NET_RAW
       - NET_ADMIN
     environment:
-      - COMMAND_TIMEOUT=600
+      - COMMAND_TIMEOUT=1200
     ports:
       - "5000:5000"
     restart: unless-stopped

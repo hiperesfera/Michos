@@ -45,6 +45,9 @@
         },
           "glm-5.2:cloud": {
           "name": "glm-5.2:cloud"
+        },
+          "glm-5.3:cloud": {
+          "name": "glm-5.3:cloud"
         }
       }
     }
@@ -53,7 +56,7 @@
   "mcp": {
    "kali-server": {
      "type": "local",
-     "command": ["python3", "/opt/MCP-Kali-Server/client.py", "--server", "http://kali-server:5000", "--timeout", "660"],
+     "command": ["python3", "/opt/MCP-Kali-Server/client.py", "--server", "http://kali-server:5000", "--timeout", "1200"],
      "enabled": true,
      "timeout": 720000
    }

@@ -13,6 +13,7 @@ docker compose exec ollama ollama pull deepseek-v4-pro:cloud
 docker compose exec ollama ollama pull qwen3.5:cloud
 docker compose exec ollama ollama pull nemotron-3-ultra:cloud
 docker compose exec ollama ollama pull glm-5.2:cloud
+docker compose exec ollama ollama pull glm-5.3:cloud
 docker compose exec ollama ollama pull kimi-k3:cloud
 
 # Start Ollama sign-in in the background and capture the link it prints.
