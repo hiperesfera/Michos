@@ -1,6 +1,6 @@
 ![Michos](https://github.com/hiperesfera/Michos/raw/main/img/michos.png)
 
-> **⚠️ Disclaimer:** Michos is provided for academic and research purposes only. Using it against systems you do not own or have explicit written authorization to test is strictly forbidden. The author accepts no responsibility or liability for any misuse or damage caused by this tool.
+> **⚠️ Disclaimer:** For academic and research purposes only. Using Michos against systems you do not own or have explicit written authorization to test is strictly forbidden. The author accepts no responsibility or liability for any misuse or damage caused by this tool.
 
 Michos is an automated penetration testing agent that connects large language models (via Ollama) with Kali linux through the Model Context Protocol (MCP), enabling fully automated web application security assessments.
 
