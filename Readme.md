@@ -25,13 +25,13 @@ The whole stack (Kali tools + MCP server, Ollama, and the OpenCode agent) runs i
     git clone https://github.com/hiperesfera/Michos && cd Michos
     ```
 
-2. Initialize the stack. This builds the images, starts all three containers, updates wpscan, signs you into Ollama, and pulls the cloud models:
+2. Initialize the stack. This builds the images, starts all three containers, updates wpscan, pulls the cloud models, and starts the Ollama sign-in:
 
     ```bash
     ./bootstrap.sh
     ```
 
-    The `ollama signin` step is interactive (an ollama.com login), so run this from a terminal.
+    A **Log in to Ollama** button will appear in the web UI. Click it to connect and authenticate to Ollama.
 
 3. Run a scan from the web UI at **http://localhost:8080**: enter the target URL, mode, and model, then watch progress and read the report in the browser.
 
