@@ -40,7 +40,7 @@ The whole stack (Kali tools + MCP server, Ollama, and the OpenCode agent) runs i
     ```bash
     docker exec webui opencode \
       -m ollama/deepseek-v4-pro:cloud \
-      run "Target URL: http://zero.webappsecurity.com, Mode:pentest" \
+      run "Target URL: http://zero.webappsecurity.com, Mode:pentest, Timing:normal" \
       --file /app/skills/web-app-pentester.md
     ```
 
