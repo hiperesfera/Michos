@@ -1,5 +1,7 @@
 ![Michos](https://github.com/hiperesfera/Michos/raw/main/img/michos.png)
 
+> **⚠️ Disclaimer:** Michos is provided for academic and research purposes only. Using it against systems you do not own or have explicit written authorization to test is strictly forbidden. The author accepts no responsibility or liability for any misuse or damage caused by this tool.
+
 Michos is an automated penetration testing agent that connects large language models (via Ollama) with Kali linux through the Model Context Protocol (MCP), enabling fully automated web application security assessments.
 
 Oh, and why **Michos**? Consider it a playful parody of Mythos, as 'micho' is the [Galician](https://en.wikipedia.org/wiki/Galician_language) word for a kitten.
@@ -80,7 +82,7 @@ flowchart TD
 
         subgraph OllamaC["Docker: ollama"]
             Ollama["Ollama"]
-            LocalM["🖥️ Local\nllama3 · gemma · ..."]
+            LocalM["🖥️ Local\nllama3.1 · qwen2.5 · hermes3 · gemma4"]
             Ollama --> LocalM
         end
 
@@ -95,7 +97,7 @@ flowchart TD
         API -->|"subprocess"| Tools
     end
 
-    CloudM["☁️ Cloud Models\nqwen3.5:cloud · deepseek-v4-pro:cloud · kimi-k2.6:cloud\nkimi-k3:cloud · glm-5.2:cloud"]
+    CloudM["☁️ Cloud Models\nqwen3.5:cloud · deepseek-v4-pro:cloud · deepseek-v4.1-flash:cloud · deepseek-v3.2:cloud\nkimi-k3:cloud · kimi-k2.6:cloud · kimi-k2.5:cloud\nglm-5.3:cloud · glm-5.2:cloud · nemotron-3-ultra:cloud"]
 
     Ollama -->|"API"| CloudM
     Tools --> Target(["Target\nWeb App"])
