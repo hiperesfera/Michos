@@ -15,6 +15,7 @@ docker compose exec ollama ollama pull nemotron-3-ultra:cloud
 docker compose exec ollama ollama pull glm-5.2:cloud
 docker compose exec ollama ollama pull glm-5.3:cloud
 docker compose exec ollama ollama pull kimi-k3:cloud
+docker compose exec ollama ollama run deepseek-v4.1-flash:cloud
 
 # Start Ollama sign-in in the background and capture the link it prints.
 # `ollama signin` shows a URL and waits until the user completes auth in the browser;

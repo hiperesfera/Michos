@@ -48,6 +48,9 @@
         },
           "glm-5.3:cloud": {
           "name": "glm-5.3:cloud"
+        },
+          "deepseek-v4.1-flash:cloud": {
+          "name": "deepseek-v4.1-flash:cloud"
         }
       }
     }
@@ -56,9 +59,9 @@
   "mcp": {
    "kali-server": {
      "type": "local",
-     "command": ["python3", "/opt/MCP-Kali-Server/client.py", "--server", "http://kali-server:5000", "--timeout", "1200"],
+     "command": ["python3", "/opt/MCP-Kali-Server/client.py", "--server", "http://kali-server:5000", "--timeout", "1260"],
      "enabled": true,
-     "timeout": 720000
+     "timeout": 1320000
    }
   }
 }
