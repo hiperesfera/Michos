@@ -1,6 +1,0 @@
-results/webui/
-.claude/
-webui/__pycache__/
-reports/
-results/cli-*
-results/sweep-*
