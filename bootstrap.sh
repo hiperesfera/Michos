@@ -1,14 +1,14 @@
 #! /bin/bash
 
-# Start all containers (webui serves the scan UI on :8080).
-# Missing images are built (kali/opencode-runner) or pulled (ollama); existing images are reused as-is.
-# After editing a Dockerfile, rebuild explicitly: docker compose up -d --build
+if ! command -v docker >/dev/null 2>&1 || ! docker compose version >/dev/null 2>&1; then
+  echo "Error: Docker and Docker Compose are required. Install the Docker environment first." >&2
+  exit 1
+fi
+
 docker compose up -d
 
-# Update wpscan
 docker compose exec kali-server wpscan --update
 
-# Download models (pulling does not require sign-in; running :cloud models does).
 docker compose exec ollama ollama pull deepseek-v4-pro:cloud
 docker compose exec ollama ollama pull qwen3.5:cloud
 docker compose exec ollama ollama pull nemotron-3-ultra:cloud
@@ -17,14 +17,10 @@ docker compose exec ollama ollama pull glm-5.3:cloud
 docker compose exec ollama ollama pull kimi-k3:cloud
 docker compose exec ollama ollama run deepseek-v4.1-flash:cloud
 
-# Start Ollama sign-in in the background and capture the link it prints.
-# `ollama signin` shows a URL and waits until the user completes auth in the browser;
-# we surface that URL as the "Log in to Ollama" button in the web UI.
 echo "Starting Ollama sign-in..."
 SIGNIN_LOG="$(mktemp)"
 docker compose exec -T ollama ollama signin >"$SIGNIN_LOG" 2>&1 &
 
-# Poll the output for the sign-in URL, then inject it into the web UI container.
 LOGIN_URL=""
 for _ in $(seq 1 20); do
   LOGIN_URL="$(grep -oE 'https?://[^[:space:]]+' "$SIGNIN_LOG" | head -1)"
@@ -39,7 +35,6 @@ else
   cat "$SIGNIN_LOG"
 fi
 
-# Wait for the web UI, then open it so the user can click "Log in to Ollama".
 URL="http://localhost:8080"
 echo ""
 echo "Waiting for the web UI at $URL ..."
@@ -55,14 +50,10 @@ else
   echo "Open $URL in your browser."
 fi
 
-# `ollama signin` (non-interactive) only prints the URL and exits. Login is done
-# asynchronously by the user via the "Log in to Ollama" button in the web UI (which detects
-# sign-in live), so bootstrap does not block on it.
 rm -f "$SIGNIN_LOG"
 echo ""
 echo "Sign in to Ollama anytime via the 'Log in to Ollama' button at $URL"
 
-# Print how to launch scans
 echo ""
 echo "Init complete. Launch scans from the web UI at: http://localhost:8080"
 echo ""
