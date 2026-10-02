@@ -59,9 +59,9 @@
   "mcp": {
    "kali-server": {
      "type": "local",
-     "command": ["python3", "/opt/MCP-Kali-Server/client.py", "--server", "http://kali-server:5000", "--timeout", "1800"],
+     "command": ["python3", "/opt/MCP-Kali-Server/client.py", "--server", "http://kali-server:5000", "--timeout", "18300"],
      "enabled": true,
-     "timeout": 1980000
+     "timeout": 18600000
    }
   }
 }
