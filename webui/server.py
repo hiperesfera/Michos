@@ -113,12 +113,14 @@ def build_message(url, mode, timing, auth, auth2):
 def run_scan(scan_id, model, message, outdir):
     logpath = os.path.join(outdir, "scan.log")
     with open(logpath, "w") as log:
-        log.write(f"$ opencode -m {model} run <message> --agent {AGENT_NAME}\n\n{message}\n\n{'='*60}\n\n")
+        log.write(f"$ opencode --auto -m {model} run <message> --agent {AGENT_NAME}\n\n{message}\n\n{'='*60}\n\n")
         log.flush()
         # start_new_session=True puts opencode in its own process group so cancel can kill
         # the whole session (agent + any children) with one signal.
+        # --auto auto-approves permissions; without it, opencode rejects writes outside
+        # the run's cwd (e.g. report written to /results root) as `external_directory`.
         proc = subprocess.Popen(
-            ["opencode", "-m", model, "run", message, "--agent", AGENT_NAME],
+            ["opencode", "--auto", "-m", model, "run", message, "--agent", AGENT_NAME],
             cwd=outdir, stdout=log, stderr=subprocess.STDOUT,
             start_new_session=True,
         )
