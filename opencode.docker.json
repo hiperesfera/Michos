@@ -63,5 +63,13 @@
      "enabled": true,
      "timeout": 18600000
    }
+  },
+
+  "agent": {
+    "pentest": {
+      "description": "Web application penetration tester: runs the Michos web-app-pentester doctrine against an authorized target and writes an evidence-based report.",
+      "mode": "primary",
+      "prompt": "{file:./skills/web-app-pentester.md}"
+    }
   }
 }
