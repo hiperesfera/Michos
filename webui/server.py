@@ -22,6 +22,7 @@ from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 
 CONFIG_PATH = os.environ.get("OPENCODE_CONFIG", "/app/opencode.docker.json")
 SKILL_FILE = "/app/skills/web-app-pentester.md"
+AGENT_NAME = "pentest"
 LOGO_PATH = os.environ.get("LOGO_PATH", "/app/img/michos.png")
 OLLAMA_LOGIN_URL = os.environ.get("OLLAMA_LOGIN_URL", "").strip()
 OLLAMA_HOST = os.environ.get("OLLAMA_HOST", "http://ollama:11434")
@@ -112,12 +113,12 @@ def build_message(url, mode, timing, auth, auth2):
 def run_scan(scan_id, model, message, outdir):
     logpath = os.path.join(outdir, "scan.log")
     with open(logpath, "w") as log:
-        log.write(f"$ opencode -m {model} run <message> --file {SKILL_FILE}\n\n{message}\n\n{'='*60}\n\n")
+        log.write(f"$ opencode -m {model} run <message> --agent {AGENT_NAME}\n\n{message}\n\n{'='*60}\n\n")
         log.flush()
         # start_new_session=True puts opencode in its own process group so cancel can kill
         # the whole session (agent + any children) with one signal.
         proc = subprocess.Popen(
-            ["opencode", "-m", model, "run", message, "--file", SKILL_FILE],
+            ["opencode", "-m", model, "run", message, "--agent", AGENT_NAME],
             cwd=outdir, stdout=log, stderr=subprocess.STDOUT,
             start_new_session=True,
         )
