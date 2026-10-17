@@ -67,7 +67,7 @@
 
   "agent": {
     "pentest": {
-      "description": "Web application penetration tester: runs the Michos web-app-pentester doctrine against an authorized target and writes an evidence-based report.",
+      "description": "Web application penetration tester: runs the Michos web-app-pentester methodology against an authorized target and writes an evidence-based report.",
       "mode": "primary",
       "prompt": "{file:./skills/web-app-pentester.md}"
     }
